@@ -1,15 +1,15 @@
 'use client'; // Obligatoire ici
 
-import LoginForm from '../components/ConnexionForm';
-import RegisterForm from '../components/RegisterForm';
-import RealtimeMap from '../components/RealTimeMap';
+import DashboardContent from '../components/DashboardContent'
+//import DashboardMenu from '../../components/DashboardMenu';
+//import RealtimeMap from '../../components/RealTimeMap';
+import Menu from "../components/DashboardMenu";
 
 export default function Home() {
   return (
-    <div>
-      <LoginForm />
-      <RegisterForm />
-      <RealtimeMap />
+    <div className='dashbord-page'>
+      <Menu />
+      <DashboardContent />
     </div>
-  );
+  )
 }
