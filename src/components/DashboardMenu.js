@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 //import { useRouter } from 'next/router';
 
 const MenuItem = ({ src, alt, href, label, isActive }) => {
@@ -24,7 +25,7 @@ export default function Menu() {
 		<div className="bg-white p-4 rounded shadow-md w-1/5">
 			{/* Logo */}
 			<div className="flex items-center space-x-2 mb-4">
-				<img src="https://i.ibb.co/1ts0fBm9/Frame-36.png" alt="Logo Kin Distribution" className="w-8 h-8 rounded-full" />
+                <Image src={"https://i.ibb.co/1ts0fBm9/Frame-36.png"} alt={"Logo Kin Distribution"} width={32} height={32} className="w-8 h-8 rounded-full" />
 				<h1 className="text-xl font-bold">J-napps Tracker</h1>
 			</div>
 
