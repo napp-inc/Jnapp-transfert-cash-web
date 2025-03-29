@@ -8,7 +8,7 @@ import React from "react";
 // PreviewItems Component
 const PreviewItems = ({ src, alt, name, count }) => {
     return (
-        <div className="bg-white shadow rounded p-4 flex flex-col items-center justify-center space-y-2">
+        <div className="preview-alert">
             <img src={src} alt={alt} className="w-8 h-8" />
             <p className="text-blue-500 font-semibold">{name}</p>  
             <p className="text-blue-500 font-bold">{count}</p>
@@ -19,9 +19,9 @@ const PreviewItems = ({ src, alt, name, count }) => {
 // Preview Component
 export default function Preview() {
     return (
-        <div className="bg-gray-100 p-4">
-            <h2 className="text-red-2xl font-bold mb-4">Aperçu</h2>
-            <div className="flex overflow-x-auto space-x-4">
+        <div className="bg-gray-100 p-4 w-[100%]">
+            <h2 className="text-black-2xl font-bold mb-4">Aperçu</h2>
+            <div className="preview">
                 <PreviewItems
                     src="/dashboardIconeActive.svg"
                     alt="Transferts en cours"

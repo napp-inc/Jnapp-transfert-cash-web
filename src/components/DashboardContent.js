@@ -8,9 +8,10 @@ import RealtimeMap from './RealTimeMap';
 
 export default function DashboardContent() {
     return (
-        <div className="dashbord-content">
+        <div className="w-4/5">
             <Preview />
             <RealtimeMap />
+            <TransfertsNow />
         </div>
     );
 }
