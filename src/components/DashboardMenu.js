@@ -4,12 +4,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import useMediaQuery from '../hooks/UseMediaQuery';
-//import { useRouter } from 'next/router';
+import { getAuth, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 const MenuItem = ({ src, alt, href, label, isActive }) => {
 	return (
 		<div className="flex items-center space-x-2 py-2 hover:bg-gray-100 transition duration-300">
-			<img src={src} alt={alt} className="w-6 h-6" />
+			<Image
+				src={src}
+				alt={alt}
+				width={24} // 1.5rem (équivalent à w-6)
+				height={24} // 1.5rem (équivalent à h-6)
+				className="w-6 h-6" // Conservation des classes Tailwind
+				loading="lazy" // Chargement différé recommandé [[3]][[7]]
+			/>
+
+			{/* <img src={src} alt={alt} className="w-6 h-6" /> */}
 			<Link href={href} passHref>
 				<span className={`text-lg ${isActive ? 'text-yellow-500 font-bold' : 'text-gray-700'}`}>{label}</span>
 			</Link>
@@ -18,6 +28,8 @@ const MenuItem = ({ src, alt, href, label, isActive }) => {
 };
 
 export default function Menu() {
+	const router = useRouter();
+	const auth = getAuth();
 	const [isHidden, setIsHidden] = useState(false);
 	const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -25,8 +37,9 @@ export default function Menu() {
 		if (isMobile) setIsHidden((prev) => !prev);
 	};
 
-	const handleLogout = () => {
-		// Logic to handle logout
+	const handleLogout = async () => {
+		await signOut(auth);
+		router.push('/');
 		console.log('Déconnexion');
 	};
 

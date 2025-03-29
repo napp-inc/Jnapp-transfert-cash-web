@@ -1,12 +1,12 @@
-"use client"
-import "./globals.css";
+'use client';
+import './globals.css';
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="fr">
-      <body>
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="fr">
+			<body>
+				{children}
+			</body>
+		</html>
+	);
 }
