@@ -13,7 +13,7 @@ const fetcher = async (...args) => {
 
 export const Alerts = () => {
 	const { data, error, isLoading } = useSWR('/api/alerts', fetcher, {
-		refreshInterval: 60000,
+		refreshInterval: 50000,
 		revalidateOnFocus: true,
 		revalidateOnReconnect: true,
 	});
