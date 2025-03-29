@@ -69,7 +69,7 @@ export default function RealtimeMap() {
 	}, [apiUrl]);
 
 	return (
-		<div className="bg-gray-100 p-4 w-full">
+		<div className="bg-gray-100 p-4 w-full items-center">
 			<h2 className="text-xl font-bold mb-4">Carte</h2>
 			<MapContainer center={[-4.389892, 15.313868]} zoom={17} style={{ height: '70vh', width: '70vw' }}>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />

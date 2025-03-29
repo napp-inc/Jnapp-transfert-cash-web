@@ -7,7 +7,7 @@ import Menu from "../../components/DashboardMenu";
 
 export default function Home() {
   return (
-    <div className='flex gap-0'>
+    <div className='flex flex-col sm:flex-row gap-0 '>
       <Menu />
       <DashboardContent />
     </div>

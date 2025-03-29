@@ -7,7 +7,7 @@ export default function DataTable({ apiUrl }) {
 	const columns = ['Transfert', 'Date', 'Chargé', 'Validateur', 'Véhicule', 'Sac', 'Trajet', 'Alertes', 'Montant ', 'Status'];
 
 	return (
-		<div className="bg-gray-100 p-4 w-[100%]">
+		<div className="bg-gray-100 p-4 w-[100%] items-center">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Transferts récents</h2>
 			<div className="transferts-table overflow-auto hide-scrollbar">
 				{loading && <p className="px-4 py-8 text-center">Chargement...</p>}

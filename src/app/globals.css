@@ -30,7 +30,19 @@
 }
 
 .transferts-table {
-  max-width: 70vw;
+	max-width: 70vw;
 	border-top-width: 1px;
 	border-color: #e5e7eb;
+}
+
+@media (max-width: 640px) {
+	.preview {
+		flex-wrap: wrap;
+	}
+  .preview-alert {
+    width: 30vw;
+    height: 30vw;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
 }
