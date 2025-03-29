@@ -9,11 +9,11 @@ export default function DataTable({ apiUrl }) {
 	return (
 		<div className="bg-gray-100 p-4 w-[100%]">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Transferts récents</h2>
-			<div className="overflow-x-auto overflow-y-auto">
-				{loading && <p className="text-gray-500">Chargement...</p>}
+			<div className="transferts-table overflow-auto hide-scrollbar">
+				{loading && <p className="px-4 py-8 text-center">Chargement...</p>}
 				{error && <p className="text-red-500 mb-4">⚠️ {error}</p>}
 
-				<table className="bg-white-100 min-w-full divide-y divide-gray-200">
+				<table className="bg-white-100 divide-y divide-gray-200">
 					<thead>
 						<tr>
 							{columns.map((col, idx) => (

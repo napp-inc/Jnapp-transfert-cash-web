@@ -1,29 +1,36 @@
 @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 
-.preview{
-  width: 70vw;
-  display: flex;
-  justify-content: space-between;
+.preview {
+	width: 70vw;
+	display: flex;
+	justify-content: space-between;
 }
 
-.preview-alert{
-  width: 15vw;
-  height: 15vw;
-  background-color: white;
-  padding: 5px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.preview-alert {
+	width: 15vw;
+	height: 15vw;
+	background-color: white;
+	padding: 5px;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10%;
 }
 
-.preview-alert p{
-  font-size: 20px;
-  font-weight: 600;
-  text-align: center;
+.preview-alert p {
+	font-size: 20px;
+	font-weight: 600;
+	text-align: center;
 }
 
-.title-size{
-  font-size: larger;
+.title-size {
+	font-size: larger;
+}
+
+.transferts-table {
+  max-width: 70vw;
+	border-top-width: 1px;
+	border-color: #e5e7eb;
 }
