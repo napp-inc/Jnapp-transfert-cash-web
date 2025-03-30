@@ -1,14 +1,12 @@
-// components/MapComponent.jsx
 'use client';
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
 import useSWR from 'swr';
 import io from 'socket.io-client';
 import { apiBackendRoute } from '../firebase';
 import { apiKeyGoogleMaps } from '../firebase';
 
-// Données statiques par défaut
+// Données statiques par défaut [[3]]
 const defaultStatic = [
 	{ id: 1, name: 'AGENCE NGABA', lat: -4.389857, lng: 15.313761 },
 	{ id: 2, name: 'AGENCE UPN', lat: -4.407689, lng: 15.256341 },
@@ -16,7 +14,7 @@ const defaultStatic = [
 	{ id: 4, name: 'RAWBANK UPC', lat: -4.335108, lng: 15.29656 },
 ];
 
-// Données mobiles par défaut
+// Données mobiles par défaut [[5]]
 const defaultMobile = [
 	{
 		id: 1,
@@ -38,11 +36,11 @@ const defaultMobile = [
 			{ lat: -4.335108, lng: 15.29656 },
 		],
 		speed: 0,
-		lastMove: Date.now() - 600000,
+		lastMove: Date.now() - 600000, // Arrêt de 10min
 	},
 ];
 
-// Hook pour agences fixes
+// Hook pour agences fixes [[7]]
 const useAgencies = () => {
 	const { data, error } = useSWR(
 		'/agencies',
@@ -53,10 +51,11 @@ const useAgencies = () => {
 			}),
 		{ revalidateOnFocus: false }
 	);
+
 	return error ? defaultStatic : data || defaultStatic;
 };
 
-// Hook pour unités mobiles avec animation corrigée
+// Hook pour unités mobiles avec gestion d'erreur [[1]][[5]]
 const useMobileUnits = (isLoaded) => {
 	const [mobileUnits, setMobileUnits] = useState(defaultMobile);
 	const [alerts, setAlerts] = useState({});
@@ -64,21 +63,6 @@ const useMobileUnits = (isLoaded) => {
 	const [directions, setDirections] = useState({});
 	const [etas, setEtas] = useState({});
 
-	// Mise à jour continue des positions
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setMobileUnits((prev) =>
-				prev.map((unit) => ({
-					...unit,
-					position: unit.speed > 0 ? getNextPosition(unit) : unit.position,
-					lastMove: Date.now(),
-				}))
-			);
-		}, 5000);
-		return () => clearInterval(interval);
-	}, []);
-
-	// Gestion socket.io
 	useEffect(() => {
 		if (!isLoaded) return;
 
@@ -88,43 +72,57 @@ const useMobileUnits = (isLoaded) => {
 			socket.emit('get-mobile-units');
 		});
 
-		socket.on('mobile-data', (data) => {
-			console.log('Données reçues:', data);
-			setMobileUnits(data);
-		});
+		socket.on('mobile-data', (data) => setMobileUnits(data));
 
 		socket.on('disconnect', () => {
 			setIsConnected(false);
 			setMobileUnits(defaultMobile);
 		});
 
-		return () => socket.disconnect();
-	}, [isLoaded]);
+		let interval;
+		if (!isConnected) {
+			interval = setInterval(() => {
+				setMobileUnits((prev) =>
+					prev.map((unit) => ({
+						...unit,
+						position: unit.speed > 0 ? getNextPosition(unit) : unit.position,
+					}))
+				);
+			}, 5000);
+		}
 
-	// Calcul de position cyclique
+		return () => {
+			socket.disconnect();
+			clearInterval(interval);
+		};
+	}, [isLoaded, isConnected]);
+
 	const getNextPosition = (unit) => {
 		const currentIndex = unit.path.findIndex((p) => p.lat === unit.position.lat && p.lng === unit.position.lng);
-		const nextIndex = (currentIndex + 1) % unit.path.length; // Boucle infinie
-		return unit.path[nextIndex];
+		return unit.path[currentIndex + 1] || unit.path[0];
 	};
 
-	// Gestion des itinéraires
 	useEffect(() => {
 		if (!isLoaded || !isConnected) return;
 
 		const fetchRoute = async (unit) => {
 			try {
-				if (!google?.maps?.DirectionsService) return;
+				if (!google?.maps?.DirectionsService) {
+					console.warn('API Google Maps non prête');
+					return;
+				}
+
 				const directionsService = new google.maps.DirectionsService();
 				const result = await directionsService.route({
-					origin: new google.maps.LatLng(unit.path[0]),
-					destination: new google.maps.LatLng(unit.path[unit.path.length - 1]),
+					origin: new google.maps.LatLng(unit.path[0].lat, unit.path[0].lng),
+					destination: new google.maps.LatLng(unit.path[unit.path.length - 1].lat, unit.path[unit.path.length - 1].lng),
 					travelMode: 'DRIVING',
 					drivingOptions: {
 						departureTime: new Date(),
 						trafficModel: 'bestguess',
 					},
 				});
+
 				setDirections((prev) => ({ ...prev, [unit.id]: result }));
 				setEtas((prev) => ({
 					...prev,
@@ -138,7 +136,6 @@ const useMobileUnits = (isLoaded) => {
 		mobileUnits.forEach((unit) => fetchRoute(unit));
 	}, [mobileUnits, isConnected, isLoaded]);
 
-	// Gestion des alertes
 	useEffect(() => {
 		if (!isConnected) return;
 
@@ -154,16 +151,19 @@ const useMobileUnits = (isLoaded) => {
 	return { mobileUnits, alerts, directions, etas };
 };
 
-// Composant principal avec options de carte ajustées
-export default function RealTimeMap() {
+// Composant principal avec gestion des erreurs
+export default function MapComponent() {
 	const { isLoaded, loadError } = useJsApiLoader({
 		googleMapsApiKey: apiKeyGoogleMaps,
-		libraries: ['places', 'directions'],
-		loadingTimeout: 10000,
+		libraries: ['places'],
+		authReferrerPolicy: 'origin', // Correction pour iOS
+		loadingTimeout: 15000, // Augmentation du délai
 	});
 
 	useEffect(() => {
-		if (loadError) console.error('Erreur Google Maps:', loadError);
+		if (loadError) {
+			console.error('Erreur de chargement Google Maps:', loadError);
+		}
 	}, [loadError]);
 
 	const [filters, setFilters] = useState({
@@ -175,47 +175,55 @@ export default function RealTimeMap() {
 	const { mobileUnits, alerts, directions, etas } = useMobileUnits(isLoaded);
 	const defaultCenter = { lat: -4.389892, lng: 15.313868 };
 
-	if (loadError) return <div>Erreur de chargement de la carte</div>;
-	if (!isLoaded) return <div>Chargement...</div>;
+	if (loadError) {
+		return (
+			<div>
+				<p>Erreur de chargement de la carte</p>
+				<button onClick={() => window.location.reload()}>Réessayer</button>
+			</div>
+		);
+	}
+
+	if (!isLoaded) {
+		return <div>Chargement de la carte...</div>;
+	}
 
 	return (
-		<div className="bg-gray-100 p-4 w-full">
-			<h2 className="text-xl font-bold mb-4">Carte</h2>
-
-			<GoogleMap
-				mapContainerStyle={{ height: '80vh', width: '100%' }}
-				center={defaultCenter}
-				zoom={12}
-				options={{
-					mapTypeControl: false,
-					streetViewControl: false,
-					rotateControl: true,
-					fullscreenControl: false,
-				}}
-			>
-				{/* Agences fixes */}
+		<div className="bg-gray-100 p-4 w-[100%] items-center">
+			<h2 className="text-black-xl font-bold mb-4 title-size">Carte</h2>
+			<GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={12}>
 				{agencies.map((agency) => (
 					<Marker
 						key={agency.id}
 						position={{ lat: agency.lat, lng: agency.lng }}
 						icon={{
-							url: '/blue-marker.png',
+							url: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png',
 							scaledSize: new google.maps.Size(30, 30),
 						}}
 					/>
 				))}
 
-				{/* Unités mobiles avec clé dynamique */}
 				{mobileUnits
-					.filter((unit) => !filters.showStops || !alerts[unit.id])
+					.filter((unit) => {
+						if (!filters.showStops && alerts[unit.id]) return false;
+						return true;
+					})
 					.map((unit) => (
 						<React.Fragment key={unit.id}>
-							{directions[unit.id] && <DirectionsRenderer directions={directions[unit.id]} options={{ polylineOptions: { strokeColor: '#FFA500', strokeWeight: 4 } }} />}
+							{directions[unit.id] && (
+								<DirectionsRenderer
+									directions={directions[unit.id]}
+									options={{
+										polylineOptions: { strokeColor: '#FFA500', strokeWeight: 4 },
+									}}
+								/>
+							)}
 							<Marker
-								key={`${unit.id}-${unit.position.lat}-${unit.position.lng}`} // [[1]]
 								position={unit.position}
 								icon={{
-									url: alerts[unit.id] ? '/red-marker.png' : '/yellow-marker.png',
+									url: alerts[unit.id]
+										? 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-red.png'
+										: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-yellow.png',
 									scaledSize: new google.maps.Size(30, 30),
 								}}
 								label={{

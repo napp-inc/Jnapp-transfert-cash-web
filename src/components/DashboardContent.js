@@ -1,16 +1,14 @@
+// Composant parent DashboardContent.jsx
 'use client';
-// import Link from 'next/link';
-// import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import Preview from './Preview';
 import TransfertsNow from './TransferetsNow';
-// import RealtimeMap from './RealTimeMap';
 import NotificationsList from './AlertsNow';
 
-const RealTimeMap = dynamic(
-	() => import('./RealTimeMap'),
-	{ ssr: false } // Désactive SSR pour ce composant
-);
+const RealTimeMap = dynamic(() => import('./RealTimeMap'), {
+	ssr: false,
+	loading: () => <div>Chargement de la carte...</div>, // Ajoutez un état de chargement [[5]]
+});
 
 export default function DashboardContent() {
 	return (
