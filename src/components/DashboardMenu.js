@@ -1,11 +1,10 @@
 'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import useMediaQuery from '../hooks/UseMediaQuery';
-import { getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../contexts/AuthContext'; // Import du contexte personnalisé
 
 const MenuItem = ({ src, alt, href, label, isActive }) => {
 	return (
@@ -20,7 +19,7 @@ const MenuItem = ({ src, alt, href, label, isActive }) => {
 
 export default function Menu() {
 	const router = useRouter();
-	const auth = getAuth();
+	const { logout } = useAuth(); // Utilisation du logout personnalisé
 	const [isHidden, setIsHidden] = useState(false);
 	const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -29,9 +28,13 @@ export default function Menu() {
 	};
 
 	const handleLogout = async () => {
-		await signOut(auth);
-		router.push('/');
-		console.log('Déconnexion');
+		try {
+			await logout(); // Appel de la méthode du contexte
+			router.push('/'); // Redirection après déconnexion
+			console.log('Déconnexion réussie');
+		} catch (error) {
+			console.error('Erreur lors de la déconnexion:', error);
+		}
 	};
 
 	return (

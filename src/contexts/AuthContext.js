@@ -1,28 +1,56 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase';
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-	const [currentUser, setCurrentUser] = useState(null);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged((user) => {
-			setCurrentUser(user);
-			setLoading(false);
-		});
 
-		return unsubscribe;
+	// Vérification du token au chargement
+	useEffect(() => {
+		const checkAuthStatus = async () => {
+
+            if (typeof window !== 'undefined'){
+                const token = localStorage.getItem('authToken');
+			if (token) {
+				try {
+					// Optionnel : Valider le token avec le backend
+					// const response = await fetch('/api/validate-token', { headers: { Authorization: `Bearer ${token}` } });
+					// if (response.ok) setIsAuthenticated(true);
+					setIsAuthenticated(true);
+				} catch (error) {
+					console.error('Token validation failed:', error);
+				}
+			}
+			setLoading(false);
+            }
+			
+		};
+		checkAuthStatus();
 	}, []);
 
-	const value = {
-		currentUser,
+	const login = (token) => {
+		localStorage.setItem('authToken', token);
+		setIsAuthenticated(true);
+	};
+
+	const logout = async () => {
+		localStorage.removeItem('authToken');
+		setIsAuthenticated(false);
+	};
+
+	const contextValue = {
+		isAuthenticated,
+		user,
+		login,
+		logout,
 		loading,
 	};
 
-	return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={contextValue}>{!loading && children}</AuthContext.Provider>;
 }
 
 AuthProvider.propTypes = {

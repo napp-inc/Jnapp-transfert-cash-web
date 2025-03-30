@@ -1,25 +1,35 @@
 'use client';
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '../firebase';
+import { backendLogin } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginForm() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	// const [error, setError] = useState('');
 	const router = useRouter();
+	const { isAuthenticated, login, logout } = useAuth();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await signInWithEmailAndPassword(auth, email, password);
-			console.log('connexion réussie');
+			// Appel à notre backend au lieu de Firebase
+			const response = await fetch(`${backendLogin}`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password }),
+			});
+
+			if (!response.ok) throw new Error('Identifiants invalides');
+
+			const { token } = await response.json();
+			localStorage.setItem('authToken', token); // Stockage du token JWT
+			console.log('Connexion réussie');
 			router.push('/dashboard');
+			login(responseToken);
 		} catch (error) {
-			console.log('User signed in error:', error);
-			console.error('Login error:', error);
-			alert('Connexion echouée');
+			console.error('Erreur de connexion:', error);
+			alert('Connexion échouée : ' + error.message);
 		}
 	};
 
