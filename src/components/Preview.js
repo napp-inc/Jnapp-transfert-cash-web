@@ -1,17 +1,14 @@
 'use client';
-
 // import { useState } from 'react';
 // import { useRouter } from 'next/navigation';
-
 import React from 'react';
 import Image from 'next/image';
 
-// PreviewItems Component
 const PreviewItems = ({ src, alt, name, count, style }) => {
 	return (
 		<div className="preview-alert flex items-center space-x-2">
 			<Image src={src} alt={alt} width={32} height={32} className="object-cover" />
-			<div className="flex flex-col gap-5">
+			<div className="flex flex-col gap-5 preview-alert-sub">
 				<p className= {style}>{name}</p>
 				<p className={style}>{count}</p>
 			</div>
@@ -19,7 +16,6 @@ const PreviewItems = ({ src, alt, name, count, style }) => {
 	);
 };
 
-// Preview Component
 export default function Preview() {
 	return (
 		<div className="bg-gray-100 p-4 w-[100%] items-center">

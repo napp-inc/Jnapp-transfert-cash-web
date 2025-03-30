@@ -10,16 +10,7 @@ import { useRouter } from 'next/navigation';
 const MenuItem = ({ src, alt, href, label, isActive }) => {
 	return (
 		<div className="flex items-center space-x-2 py-2 hover:bg-gray-100 transition duration-300">
-			<Image
-				src={src}
-				alt={alt}
-				width={24} // 1.5rem (équivalent à w-6)
-				height={24} // 1.5rem (équivalent à h-6)
-				className="w-6 h-6" // Conservation des classes Tailwind
-				loading="lazy" // Chargement différé recommandé [[3]][[7]]
-			/>
-
-			{/* <img src={src} alt={alt} className="w-6 h-6" /> */}
+			<Image src={src} alt={alt} width={24} height={24} className="w-6 h-6" loading="lazy" />
 			<Link href={href} passHref>
 				<span className={`text-lg ${isActive ? 'text-yellow-500 font-bold' : 'text-gray-700'}`}>{label}</span>
 			</Link>
@@ -45,7 +36,6 @@ export default function Menu() {
 
 	return (
 		<div className="bg-white p-4 rounded shadow-md w-5/5 sm:w-1/5">
-			{/* Logo */}
 			<div className="flex items-center space-x-2 mb-4">
 				<Image src={'https://i.ibb.co/1ts0fBm9/Frame-36.png'} alt={'Logo Kin Distribution'} width={32} height={32} className="w-8 h-8 rounded-full" />
 				<h1 onClick={toggleVisibility} className="text-xl font-bold">
@@ -53,10 +43,8 @@ export default function Menu() {
 				</h1>
 			</div>
 
-			{/* Ligne de séparation */}
 			<hr className="my-2 border-gray-300" />
 
-			{/* Première section du menu */}
 			<div
 				className={`${isHidden && isMobile ? 'hidden' : ''} 
           md:block`}
@@ -68,13 +56,11 @@ export default function Menu() {
 				<MenuItem src="/reportsIconeInactive.svg" alt="Rapports" href="#" label="Rapports" />
 			</div>
 
-			{/* Ligne de séparation */}
 			<hr
 				className={`${isHidden && isMobile ? 'hidden' : ''} 
           md:block my-4 border-gray-300`}
 			/>
 
-			{/* Deuxième section du menu */}
 			<div
 				className={`${isHidden && isMobile ? 'hidden' : ''} 
           md:block`}
@@ -82,7 +68,6 @@ export default function Menu() {
 				<MenuItem src="/accountIconeInactive.svg" alt="Compte" href="#" label="Compte" />
 				<MenuItem src="/settingsIconeInactive.svg" alt="Paramètres" href="#" label="Paramètres" />
 
-				{/* Bouton de déconnexion */}
 				<button onClick={handleLogout} className="w-full mt-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300">
 					Déconnexion
 				</button>

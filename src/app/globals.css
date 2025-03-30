@@ -46,3 +46,12 @@
     margin-bottom: 15px;
   }
 }
+
+@media (min-width: 641px) and (max-width: 1280px) {
+  .preview-alert {
+    gap: 0;
+  }
+  .preview-alert-sub{
+    gap: 5px;
+  }
+}

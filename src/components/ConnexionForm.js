@@ -7,21 +7,21 @@ import { auth } from '../firebase';
 export default function LoginForm() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [error, setError] = useState('');
+	// const [error, setError] = useState('');
 	const router = useRouter();
 
 	const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-          console.log("connexion réussie")
-          router.push('/dashboard');
-        } catch (error) {
-          console.log('User signed in error:', error);
-          console.error('Login error:', error);
-          alert('Connexion echouée')
-        }
-      };
+		e.preventDefault();
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+			console.log('connexion réussie');
+			router.push('/dashboard');
+		} catch (error) {
+			console.log('User signed in error:', error);
+			console.error('Login error:', error);
+			alert('Connexion echouée');
+		}
+	};
 
 	return (
 		<div className="flex justify-center items-center h-screen bg-gray-100">
