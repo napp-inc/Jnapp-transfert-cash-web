@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -13,7 +12,7 @@ export default function RegisterForm() {
 	const router = useRouter();
 
 	const handleSubmit = async (e) => {
-		//authentification
+		//Ce qu'il faut faire au submit
 	};
 
 	return (
@@ -85,12 +84,6 @@ export default function RegisterForm() {
 						Ajouter un agent
 					</button>
 				</form>
-				{/* <p className="text-center mt-4">
-					Vous avez déjà un compte ?{' '}
-					<a href="#" className="text-yellow-500">
-						Se connecter
-					</a>
-				</p> */}
 			</div>
 		</div>
 	);

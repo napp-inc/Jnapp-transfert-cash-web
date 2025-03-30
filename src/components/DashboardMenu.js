@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import useMediaQuery from '../hooks/UseMediaQuery';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../contexts/AuthContext'; // Import du contexte personnalisé
+import { useAuth } from '../contexts/AuthContext';
 
 const MenuItem = ({ src, alt, href, label, isActive }) => {
 	return (
@@ -19,7 +19,7 @@ const MenuItem = ({ src, alt, href, label, isActive }) => {
 
 export default function Menu() {
 	const router = useRouter();
-	const { logout } = useAuth(); // Utilisation du logout personnalisé
+	const { logout } = useAuth();
 	const [isHidden, setIsHidden] = useState(false);
 	const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -29,8 +29,8 @@ export default function Menu() {
 
 	const handleLogout = async () => {
 		try {
-			await logout(); // Appel de la méthode du contexte
-			router.push('/'); // Redirection après déconnexion
+			await logout();
+			router.push('/');
 			console.log('Déconnexion réussie');
 		} catch (error) {
 			console.error('Erreur lors de la déconnexion:', error);

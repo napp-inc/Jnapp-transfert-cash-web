@@ -6,7 +6,6 @@ import io from 'socket.io-client';
 import { apiBackendRoute } from '../firebase';
 import { apiKeyGoogleMaps } from '../firebase';
 
-// Données statiques par défaut [[3]]
 const defaultStatic = [
 	{ id: 1, name: 'AGENCE NGABA', lat: -4.389857, lng: 15.313761 },
 	{ id: 2, name: 'AGENCE UPN', lat: -4.407689, lng: 15.256341 },
@@ -14,7 +13,6 @@ const defaultStatic = [
 	{ id: 4, name: 'RAWBANK UPC', lat: -4.335108, lng: 15.29656 },
 ];
 
-// Données mobiles par défaut [[5]]
 const defaultMobile = [
 	{
 		id: 1,
@@ -40,7 +38,6 @@ const defaultMobile = [
 	},
 ];
 
-// Hook pour agences fixes [[7]]
 const useAgencies = () => {
 	const { data, error } = useSWR(
 		'/agencies',
@@ -55,7 +52,6 @@ const useAgencies = () => {
 	return error ? defaultStatic : data || defaultStatic;
 };
 
-// Hook pour unités mobiles avec gestion d'erreur [[1]][[5]]
 const useMobileUnits = (isLoaded) => {
 	const [mobileUnits, setMobileUnits] = useState(defaultMobile);
 	const [alerts, setAlerts] = useState({});
@@ -151,13 +147,12 @@ const useMobileUnits = (isLoaded) => {
 	return { mobileUnits, alerts, directions, etas };
 };
 
-// Composant principal avec gestion des erreurs
 export default function MapComponent() {
 	const { isLoaded, loadError } = useJsApiLoader({
 		googleMapsApiKey: apiKeyGoogleMaps,
 		libraries: ['places'],
-		authReferrerPolicy: 'origin', // Correction pour iOS
-		loadingTimeout: 15000, // Augmentation du délai
+		authReferrerPolicy: 'origin',
+		loadingTimeout: 15000,
 	});
 
 	useEffect(() => {
@@ -185,12 +180,13 @@ export default function MapComponent() {
 	}
 
 	if (!isLoaded) {
-		return <div>Chargement de la carte...</div>;
+		return <div>Chargement...</div>;
 	}
 
 	return (
 		<div className="bg-gray-100 p-4 w-[100%] items-center">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Carte</h2>
+
 			<GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={12}>
 				{agencies.map((agency) => (
 					<Marker

@@ -10,12 +10,12 @@ export default function ProtectedRoute({ children }) {
 	useEffect(() => {
 		if (!loading && !isAuthenticated) {
 			console.log('Accès non autorisé - Redirection vers la connection');
-			router.push('/'); // Utilisez votre route de connexion
+			router.push('/');
 		}
 	}, [isAuthenticated, loading, router]);
 
 	if (loading) {
-		return <div>Loading...</div>; // Affichage temporaire pendant la vérification
+		return <div>Chargement...</div>;
 	}
 
 	return isAuthenticated ? children : null;

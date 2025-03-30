@@ -26,7 +26,6 @@ export default function LoginForm() {
 			localStorage.setItem('authToken', token); // Stockage du token JWT
 			console.log('Connexion réussie');
 			router.push('/dashboard');
-			login(responseToken);
 		} catch (error) {
 			console.error('Erreur de connexion:', error);
 			alert('Connexion échouée : ' + error.message);
@@ -62,12 +61,6 @@ export default function LoginForm() {
 						Se connecter
 					</button>
 				</form>
-				{/* <p className="text-center mt-4">
-					Vous n avez pas de compte ?
-					<a href="#" className="text-yellow-500">
-						Créer un compte
-					</a>
-				</p> */}
 			</div>
 		</div>
 	);

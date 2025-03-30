@@ -7,7 +7,7 @@ import NotificationsList from './AlertsNow';
 
 const RealTimeMap = dynamic(() => import('./RealTimeMap'), {
 	ssr: false,
-	loading: () => <div>Chargement de la carte...</div>, // Ajoutez un état de chargement [[5]]
+	loading: () => <div>Chargement...</div>,
 });
 
 export default function DashboardContent() {
