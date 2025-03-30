@@ -24,8 +24,8 @@ export default function LoginForm() {
 	};
 
 	return (
-		<div className="flex justify-center items-center h-screen bg-gray-100">
-			<div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+		<div className="bg-white flex justify-center items-center h-screen sm:bg-gray-100">
+			<div className="bg-white p-8 rounded-lg sm:shadow-md w-full max-w-md">
 				<h1 className="text-2xl font-bold text-center mb-6">Connexion</h1>
 				<img src="https://i.ibb.co/1ts0fBm9/Frame-36.png" alt="Logo Kin Distribution" className="w-24 h-24 mx-auto mb-6 rounded-full" />
 				<form onSubmit={handleSubmit} className="space-y-4">
@@ -52,12 +52,12 @@ export default function LoginForm() {
 						Se connecter
 					</button>
 				</form>
-				<p className="text-center mt-4">
+				{/* <p className="text-center mt-4">
 					Vous n avez pas de compte ?
 					<a href="#" className="text-yellow-500">
 						Créer un compte
 					</a>
-				</p>
+				</p> */}
 			</div>
 		</div>
 	);

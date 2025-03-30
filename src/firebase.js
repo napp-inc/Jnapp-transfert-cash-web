@@ -13,3 +13,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+export const apiBackendRoute = "http://localhost:3001";
+export const apiKeyGoogleMaps = "AIzaSyBf2zOFDzh_TxDRl0Lg6Jqp8sZMJ9Z-j7I";

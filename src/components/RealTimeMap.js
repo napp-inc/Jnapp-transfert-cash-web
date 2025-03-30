@@ -1,121 +1,249 @@
+// components/MapComponent.jsx
+'use client';
+import React from 'react';
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api'; // [[6]]
+import useSWR from 'swr';
+import io from 'socket.io-client';
+import { apiBackendRoute } from '../firebase';
+import { apiKeyGoogleMaps } from '../firebase';
 
-// Hook personnalisé pour données statiques avec cache
-const useCachedLocations = (apiUrl) => {
-	const [locations, setLocations] = useState([]);
+// Données statiques par défaut [[3]]
+const defaultStatic = [
+	{ id: 1, name: 'AGENCE NGABA', lat: -4.389857, lng: 15.313761 },
+	{ id: 2, name: 'AGENCE UPN', lat: -4.407689, lng: 15.256341 },
+	{ id: 3, name: 'RAWBANK CITE VERTE', lat: -4.441887, lng: 15.259098 },
+	{ id: 4, name: 'RAWBANK UPC', lat: -4.335108, lng: 15.29656 },
+];
+
+// Données mobiles par défaut [[5]]
+const defaultMobile = [
+	{
+		id: 1,
+		name: 'Unité régulière',
+		position: { lat: -4.389857, lng: 15.313761 },
+		path: [
+			{ lat: -4.389857, lng: 15.313761 },
+			{ lat: -4.407689, lng: 15.256341 },
+		],
+		speed: 30,
+		lastMove: Date.now(),
+	},
+	{
+		id: 2,
+		name: 'Unité irrégulière',
+		position: { lat: -4.441887, lng: 15.259098 },
+		path: [
+			{ lat: -4.441887, lng: 15.259098 },
+			{ lat: -4.335108, lng: 15.29656 },
+		],
+		speed: 0,
+		lastMove: Date.now() - 600000, // Arrêt de 10min
+	},
+];
+
+// Hook pour agences fixes [[7]]
+const useAgencies = () => {
+	const { data, error } = useSWR(
+		'/agencies',
+		() =>
+			fetch('/agencies').then((res) => {
+				if (!res.ok) throw new Error('API error');
+				return res.json();
+			}),
+		{ revalidateOnFocus: false }
+	);
+
+	return error ? defaultStatic : data || defaultStatic;
+};
+
+// Hook pour unités mobiles avec gestion d'erreur [[1]][[5]]
+const useMobileUnits = (isLoaded) => {
+	const [mobileUnits, setMobileUnits] = useState(defaultMobile);
+	const [alerts, setAlerts] = useState({});
+	const [isConnected, setIsConnected] = useState(true);
+	const [directions, setDirections] = useState({});
+	const [etas, setEtas] = useState({});
 
 	useEffect(() => {
-		// 1. Charger depuis le cache local
-		const cached = localStorage.getItem('cachedLocations');
-		if (cached) setLocations(JSON.parse(cached));
+		if (!isLoaded) return; // [[1]]
 
-		// 2. Connexion WebSocket pour mises à jour
-		const socket = require('socket.io-client')(apiUrl);
-
-		// 3. Écouter les mises à jour du backend
-		socket.on('update-static', (newData) => {
-			setLocations(newData);
-			localStorage.setItem('cachedLocations', JSON.stringify(newData));
+		const socket = io(`${apiBackendRoute}`);
+		socket.on('connect', () => {
+			setIsConnected(true);
+			socket.emit('get-mobile-units');
 		});
 
-		// 4. Requête initiale si pas de cache
-		if (!cached) {
-			fetch(`${apiUrl}/static-locations`)
-				.then((response) => response.json())
-				.then((data) => {
-					setLocations(data);
-					localStorage.setItem('cachedLocations', JSON.stringify(data));
-				});
+		socket.on('mobile-data', (data) => setMobileUnits(data));
+
+		socket.on('disconnect', () => {
+			setIsConnected(false);
+			setMobileUnits(defaultMobile);
+		});
+
+		let interval;
+		if (!isConnected) {
+			interval = setInterval(() => {
+				setMobileUnits((prev) =>
+					prev.map((unit) => ({
+						...unit,
+						position: unit.speed > 0 ? getNextPosition(unit) : unit.position,
+					}))
+				);
+			}, 5000);
 		}
 
-		return () => socket.disconnect();
-	}, [apiUrl]);
+		return () => {
+			socket.disconnect();
+			clearInterval(interval);
+		};
+	}, [isLoaded]); // [[1]]
 
-	return locations;
-};
-
-// Fonction pour icônes dynamiques
-const getDynamicIcon = (alertLevel) => {
-	const colors = {
-		0: 'green',
-		1: 'orange',
-		2: 'red',
+	const getNextPosition = (unit) => {
+		const currentIndex = unit.path.findIndex((p) => p.lat === unit.position.lat && p.lng === unit.position.lng);
+		return unit.path[currentIndex + 1] || unit.path[0];
 	};
 
-	return L.icon({
-		iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${colors[alertLevel]}.png`,
-		iconSize: [25, 41],
-		iconAnchor: [12, 41],
-	});
+	useEffect(() => {
+		if (!isLoaded || !isConnected) return; // [[1]][[6]]
+
+		const fetchRoute = async (unit) => {
+			try {
+				if (!google?.maps?.DirectionsService) {
+					// [[9]]
+					console.warn('API Google Maps non prête');
+					return;
+				}
+
+				const directionsService = new google.maps.DirectionsService();
+				const result = await directionsService.route({
+					origin: new google.maps.LatLng(unit.path[0].lat, unit.path[0].lng),
+					destination: new google.maps.LatLng(unit.path[unit.path.length - 1].lat, unit.path[unit.path.length - 1].lng),
+					travelMode: 'DRIVING',
+					drivingOptions: {
+						departureTime: new Date(),
+						trafficModel: 'bestguess',
+					},
+				});
+
+				setDirections((prev) => ({ ...prev, [unit.id]: result }));
+				setEtas((prev) => ({
+					...prev,
+					[unit.id]: result.routes[0].legs[0].duration_in_traffic.value,
+				}));
+			} catch (error) {
+				console.error('Erreur Directions API:', error); // [[6]]
+			}
+		};
+
+		mobileUnits.forEach((unit) => fetchRoute(unit));
+	}, [mobileUnits, isConnected, isLoaded]); // [[1]]
+
+	useEffect(() => {
+		if (!isConnected) return;
+
+		const newAlerts = {};
+		mobileUnits.forEach((unit) => {
+			if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
+				newAlerts[unit.id] = `ALERTE : ${unit.name} immobilisé`;
+			}
+		});
+		setAlerts(newAlerts);
+	}, [mobileUnits, isConnected]);
+
+	return { mobileUnits, alerts, directions, etas };
 };
 
-export default function RealtimeMap() {
-	const apiUrl = 'http://localhost:3001';
-	const staticLocations = useCachedLocations(apiUrl);
-	const [movingObjects, setMovingObjects] = useState([]);
+// Composant principal avec gestion des erreurs [[3]][[5]]
+export default function MapComponent() {
+	const { isLoaded, loadError } = useJsApiLoader({
+		googleMapsApiKey: apiKeyGoogleMaps,
+		libraries: ['places', 'directions'], // [[6]]
+		loadingTimeout: 10000, // [[1]]
+	});
 
-	// Gestion des objets en mouvement
 	useEffect(() => {
-		const socket = require('socket.io-client')(apiUrl);
+		if (loadError) {
+			console.error('Erreur de chargement Google Maps:', loadError); // [[5]]
+		}
+	}, [loadError]);
 
-		socket.on('moving-objects', (newData) => {
-			setMovingObjects(newData);
-		});
+	const [filters, setFilters] = useState({
+		showStops: true,
+		showDelays: true,
+	});
 
-		return () => socket.disconnect();
-	}, [apiUrl]);
+	const agencies = useAgencies();
+	const { mobileUnits, alerts, directions, etas } = useMobileUnits(isLoaded); // [[1]]
+	const defaultCenter = { lat: -4.389892, lng: 15.313868 };
+
+	if (loadError) {
+		return (
+			<div>
+				<p>Erreur de chargement de la carte</p>
+				<button onClick={() => window.location.reload()}>Réessayer</button>
+			</div>
+		);
+	}
+
+	if (!isLoaded) {
+		return <div>Chargement de la carte...</div>;
+	}
 
 	return (
-		<div className="bg-gray-100 p-4 w-full items-center">
-			<h2 className="text-xl font-bold mb-4">Carte</h2>
-			<MapContainer center={[-4.389892, 15.313868]} zoom={17} style={{ height: '70vh', width: '70vw' }}>
-				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
+		<>
+			<div className="filter-panel">
+				<label>
+					<input type="checkbox" checked={filters.showStops} onChange={(e) => setFilters({ ...filters, showStops: e.target.checked })} />
+					Alertes d{"'"}arrêt
+				</label>
+				<label>
+					<input type="checkbox" checked={filters.showDelays} onChange={(e) => setFilters({ ...filters, showDelays: e.target.checked })} />
+					Retards
+				</label>
+			</div>
 
-				{/* Marqueurs statiques avec cache */}
-				{staticLocations.map((location) => (
+			<GoogleMap mapContainerStyle={{ height: '80vh', width: '100%' }} center={defaultCenter} zoom={12}>
+				{agencies.map((agency) => (
 					<Marker
-						key={location.id}
-						position={[location.lat, location.lng]}
-						icon={L.icon({
-							iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-							iconSize: [25, 41],
-						})}
-					>
-						<Popup>
-							<div className="p-2">
-								<h3 className="font-bold">{location.name}</h3>
-								<p>{location.address}</p>
-								<button className="mt-2 px-3 py-1 bg-blue-500 text-white rounded" onClick={() => alert(`Navigation vers ${location.name}`)}>
-									Itinéraire
-								</button>
-							</div>
-						</Popup>
-						<Tooltip direction="top" className="bg-white text-black p-1 rounded">
-							{location.name}
-						</Tooltip>
-					</Marker>
+						key={agency.id}
+						position={{ lat: agency.lat, lng: agency.lng }}
+						icon={{
+							url: '/blue-marker.png',
+							scaledSize: new google.maps.Size(30, 30),
+						}}
+					/>
 				))}
 
-				{/* Objets en mouvement avec alertes */}
-				{movingObjects.map((obj) => (
-					<Marker key={obj.id} position={[obj.lat, obj.lng]} icon={getDynamicIcon(obj.alertLevel)}>
-						<Popup>
-							<div className="p-2">
-								<h3>{obj.name}</h3>
-								<p>Vitesse : {obj.speed} km/h</p>
-								<p>Dernière mise à jour : {new Date(obj.timestamp).toLocaleTimeString()}</p>
-							</div>
-						</Popup>
-						<Tooltip direction="right" className="bg-white text-black p-1 rounded">
-							<div>Niveau alerte : {obj.alertLevel}</div>
-							<div>Statut : {obj.status}</div>
-						</Tooltip>
-					</Marker>
-				))}
-			</MapContainer>
-		</div>
+				{mobileUnits
+					.filter((unit) => {
+						if (!filters.showStops && alerts[unit.id]) return false;
+						return true;
+					})
+					.map((unit) => (
+						<React.Fragment key={unit.id}>
+							{directions[unit.id] && (
+								<DirectionsRenderer
+									directions={directions[unit.id]}
+									options={{
+										polylineOptions: { strokeColor: '#FFA500', strokeWeight: 4 },
+									}}
+								/>
+							)}
+							<Marker
+								position={unit.position}
+								icon={{
+									url: alerts[unit.id] ? '/red-marker.png' : '/yellow-marker.png',
+									scaledSize: new google.maps.Size(30, 30),
+								}}
+								label={{
+									text: `${Math.round(etas[unit.id] / 60)} min`,
+									className: 'eta-label',
+								}}
+							/>
+						</React.Fragment>
+					))}
+			</GoogleMap>
+		</>
 	);
 }

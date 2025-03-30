@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-
 export default function RegisterForm() {
 	const [agence, setAgence] = useState('');
 	const [fullName, setFullName] = useState('');
@@ -18,9 +17,9 @@ export default function RegisterForm() {
 	};
 
 	return (
-		<div className="flex justify-center items-center h-screen bg-gray-100">
-			<div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md pt-[50px] pb-[50px]">
-				<h1 className="text-2xl font-bold text-center mb-6">Créer un compte</h1>
+		<div className="bg-white flex justify-center items-center sm:bg-gray-100">
+			<div className="bg-white p-8 rounded-lg sm:shadow-md w-full max-w-md">
+				<h1 className="text-2xl font-bold text-center mb-6 mt-6">Créer un compte</h1>
 				<img src="https://i.ibb.co/1ts0fBm9/Frame-36.png" alt="Logo Kin Distribution" className="w-24 h-24 mx-auto mb-6 rounded-full" />
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<input
@@ -71,26 +70,27 @@ export default function RegisterForm() {
 						required
 						className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-500"
 					/>
-					<p className="text-sm mt-4">
-						En créant un compte, vous acceptez nos{' '}
+					<p className="text-center mt-4">
+						En créant un compte pour un agent, vous reconnaissez avoir lu et accepter nos{' '}
 						<a href="#" className="text-yellow-500 hover:text-yellow-600">
-							conditions d utilisation
+							conditions d{"'"}utilisation
 						</a>{' '}
-						et{' '}
+						et notre{' '}
 						<a href="#" className="text-yellow-500 hover:text-yellow-600">
+							{' '}
 							politiques de confidentialité
 						</a>
 					</p>
 					<button type="submit" className="w-full bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300">
-						Création compte
+						Ajouter un agent
 					</button>
 				</form>
-				<p className="text-center mt-4">
+				{/* <p className="text-center mt-4">
 					Vous avez déjà un compte ?{' '}
 					<a href="#" className="text-yellow-500">
 						Se connecter
 					</a>
-				</p>
+				</p> */}
 			</div>
 		</div>
 	);
