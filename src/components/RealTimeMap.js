@@ -191,19 +191,9 @@ export default function MapComponent() {
 	}
 
 	return (
-		<>
-			<div className="filter-panel">
-				<label>
-					<input type="checkbox" checked={filters.showStops} onChange={(e) => setFilters({ ...filters, showStops: e.target.checked })} />
-					Alertes d{"'"}arrêt
-				</label>
-				<label>
-					<input type="checkbox" checked={filters.showDelays} onChange={(e) => setFilters({ ...filters, showDelays: e.target.checked })} />
-					Retards
-				</label>
-			</div>
-
-			<GoogleMap mapContainerStyle={{ height: '80vh', width: '100%' }} center={defaultCenter} zoom={12}>
+		<div className="bg-gray-100 p-4 w-[100%] items-center">
+			<h2 className="text-black-xl font-bold mb-4 title-size">Carte</h2>
+			<GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={12}>
 				{agencies.map((agency) => (
 					<Marker
 						key={agency.id}
@@ -244,6 +234,6 @@ export default function MapComponent() {
 						</React.Fragment>
 					))}
 			</GoogleMap>
-		</>
+		</div>
 	);
 }

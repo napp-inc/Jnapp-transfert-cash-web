@@ -11,7 +11,7 @@ export default function Home() {
 	return (
 		<AuthProvider>
 			<ProtectedRoute>
-				<div className="flex flex-col sm:flex-row gap-0 ">
+				<div className="flex flex-col sm:flex-row gap-0 bg-gray-100">
 					<Menu />
 					<DashboardContent />
 				</div>
