@@ -12,13 +12,13 @@ const useAgencies = () => {
 	// Valeur par défaut statique en cas d'erreur ou de données manquantes
 	const defaultStatic = [{ id: 1, name: 'AGENCE PAR DÉFAUT', lat: 0, lng: 0 }];
 
-	// Utilisation de SWR pour récupérer les données
+	// SWR pour récupérer les données
 	const { data, error } = useSWR(
-		backendAgencies, // Clé de l'API
+		backendAgencies,
 		() =>
-			fetch(backendAgencies) // Appel à l'API
+			fetch(backendAgencies)
 				.then((res) => {
-					if (!res.ok) throw new Error('API error'); // Gestion des erreurs HTTP
+					if (!res.ok) throw new Error('API error');
 					return res.json(); // Extraction des données JSON
 				}),
 		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
