@@ -19,7 +19,7 @@ const useAgencies = () => {
 			fetch(backendAgencies)
 				.then((res) => {
 					if (!res.ok) throw new Error('API error');
-					return res.json(); // Extraction des données JSON
+					return res.json();
 				}),
 		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
 	);
