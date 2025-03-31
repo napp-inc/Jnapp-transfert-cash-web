@@ -5,26 +5,35 @@ import useSWR from 'swr';
 import io from 'socket.io-client';
 import { apiBackendRoute } from '../firebase';
 import { apiKeyGoogleMaps } from '../firebase';
-
-const defaultStatic = [
-	{ id: 1, name: 'AGENCE NGABA', lat: -4.389857, lng: 15.313761 },
-	{ id: 2, name: 'AGENCE UPN', lat: -4.407689, lng: 15.256341 },
-	{ id: 3, name: 'RAWBANK CITE VERTE', lat: -4.441887, lng: 15.259098 },
-	{ id: 4, name: 'RAWBANK UPC', lat: -4.335108, lng: 15.29656 },
-];
+import { backendAgencies } from '../firebase';
+// import GetAgencies from '../hooks/Agencies';
 
 const useAgencies = () => {
+	// Valeur par défaut statique en cas d'erreur ou de données manquantes
+	const defaultStatic = [{ id: 1, name: 'AGENCE PAR DÉFAUT', lat: 0, lng: 0 }];
+
+	// Utilisation de SWR pour récupérer les données
 	const { data, error } = useSWR(
-		'/agencies',
+		backendAgencies, // Clé de l'API
 		() =>
-			fetch('/agencies').then((res) => {
-				if (!res.ok) throw new Error('API error');
-				return res.json();
-			}),
-		{ revalidateOnFocus: false }
+			fetch(backendAgencies) // Appel à l'API
+				.then((res) => {
+					if (!res.ok) throw new Error('API error'); // Gestion des erreurs HTTP
+					return res.json(); // Extraction des données JSON
+				}),
+		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
 	);
 
-	return error ? defaultStatic : data || defaultStatic;
+	// Transformation des données si elles existent
+	const transformedData = data?.agences?.map((agence, index) => ({
+		id: index + 1, // ID séquentiel
+		name: agence.name,
+		lat: agence.latitude,
+		lng: agence.longitude,
+	}));
+
+	// Retourner les données transformées ou la valeur par défaut
+	return error ? defaultStatic : transformedData || defaultStatic;
 };
 
 const useMobileUnits = (isLoaded) => {
@@ -44,9 +53,9 @@ const useMobileUnits = (isLoaded) => {
 		});
 
 		socket.on('mobile-data', (data) => {
-			// Mise à jour des véhicules avec les nouvelles données
+			// Mettre à jour les unités mobiles avec les nouvelles données
 			setMobileUnits(data);
-			// Mise à jour des alertes
+			// Mettre à jour les alertes
 			const newAlerts = {};
 			data.forEach((unit) => {
 				if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
@@ -58,7 +67,7 @@ const useMobileUnits = (isLoaded) => {
 
 		socket.on('disconnect', () => {
 			setIsConnected(false);
-			// Réinitialiser les véhicules si ddéconnexion
+			// Réinitialiser les unités mobiles en cas de déconnexion
 			setMobileUnits([]);
 		});
 
