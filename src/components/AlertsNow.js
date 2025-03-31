@@ -13,6 +13,11 @@ const ALERT_TYPES = {
 		color: 'text-blue-500',
 		backgroundColor: 'bg-blue-100',
 	},
+	noResponse: {
+		icon: '',
+		color: 'text-black-500',
+		backgroundColor: 'bg-gray-100',
+	}
 };
 
 const NotificationItem = ({ type, title, subtitle, timestamp }) => {
@@ -35,32 +40,27 @@ const NotificationItem = ({ type, title, subtitle, timestamp }) => {
 export default function NotificationsList() {
 	const { alerts, isLoading, isError } = Alerts();
 
-	// if (isLoading)
-	// 	return (
-	// 		<div className="bg-gray-100 p-4 w-[100%]">
-	// 			<h2 className="text-black-xl font-bold mb-4 title-size">Alertes</h2>
-	// 			<p className="px-4 py-8 text-center">Chargement ...</p>
-	// 		</div>
-	// 	);
-
-	// if (isError)
-	// 	return (
-	// 		<div className="bg-gray-100 p-4 w-[100%] items-center">
-	// 			<h2 className="text-black-xl font-bold mb-4 title-size">Alertes</h2>
-	// 			<p className="px-4 py-8 text-center">Problèmes de connexion au serveur</p>
-	// 		</div>
-	// 	);
-
 	return (
 		<div className="bg-gray-100 p-4 w-[100%] items-center">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Alertes</h2>
 			<div className="container mx-auto p-4">
 				{alerts.length === 0 ? (
 					<div className="text-center text-gray-500 py-4">Aucune alerte</div>
-				) : (
-					alerts.map((alert, index) => <NotificationItem key={index} type={alert.type} title={alert.title} subtitle={alert.subtitle} timestamp={alert.timestamp} />)
-				)}
+				) : isError ?
+					<div className={`flex items-center p-4 mb-4 rounded-lg items-center bg-gray-100`}>
+						<h3 className={`font-bold text-black-500`}>Problèmes de connexion</h3>
+					</div>
+					: isLoading ?
+						<div className={`flex items-center p-4 mb-4 rounded-lg items-center bg-gray-100`}>
+							<h3 className={`font-bold text-black-100`}>Chargement...</h3>
+						</div>
+						:
+						(
+							alerts.map((alert, index) => <NotificationItem key={index} type={alert.type} title={alert.title} subtitle={alert.subtitle} timestamp={alert.timestamp} />)
+						)}
 			</div>
 		</div>
 	);
 }
+
+

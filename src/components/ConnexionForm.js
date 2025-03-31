@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { backendLogin } from '../firebase';
+import { backendLogin } from '../endPointsAndKeys';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginForm() {

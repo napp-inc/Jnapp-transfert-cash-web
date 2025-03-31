@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
 import useSWR from 'swr';
 import io from 'socket.io-client';
-import { apiBackendRoute } from '../firebase';
-import { apiKeyGoogleMaps } from '../firebase';
-import { backendAgencies } from '../firebase';
+import { apiBackendRoute } from '../endPointsAndKeys';
+import { apiKeyGoogleMaps } from '../endPointsAndKeys';
+import { backendAgencies } from '../endPointsAndKeys';
 
 const useAgencies = () => {
 	// Valeur par défaut statique en cas d'erreur ou de données manquantes
@@ -22,7 +22,7 @@ const useAgencies = () => {
 		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
 	);
 
-	// Transformation des données si elles existent
+	// Transformation des données (si elles existent)
 	const transformedData = data?.agences?.map((agence, index) => ({
 		id: index + 1, // ID séquentiel
 		name: agence.name,
@@ -148,7 +148,7 @@ export default function MapComponent() {
 		<div className="bg-gray-100 p-4 w-[100%] items-center">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Carte</h2>
 
-			<GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={12}>
+			<GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={15}>
 				{agencies.map((agency) => (
 					<Marker
 						key={agency.id}
