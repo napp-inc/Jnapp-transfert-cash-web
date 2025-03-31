@@ -22,12 +22,20 @@ export default function DataTable({ apiUrl = `${apiBackendRoute}/api/transferts`
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200">
-						{loading && <p className="px-4 py-8 text-center">Chargement...</p>}
-						{error && <p className="text-red-500 mb-4"> ⚠️ {error}</p>}
+						{loading && (
+							<tr colSpan={columns.length} className="px-4 py-8 text-center">
+								<td colSpan={columns.length} className="px-4 py-8 text-center">Chargement...</td>
+							</tr>
+						)}
+
+						{error && (
+							<tr colSpan={columns.length} className="px-4 py-8 text-center">
+								<td colSpan={columns.length} className="px-4 py-8 text-center">⚠️ {error}</td>
+							</tr>
+						)}
 						{data.length === 0 ? (
 							<tr>
-								<td colSpan={columns.length} className="px-4 py-8 text-center">
-								</td>
+								<td colSpan={columns.length} className="px-4 py-8 text-center"></td>
 							</tr>
 						) : (
 							data.map((item) => (

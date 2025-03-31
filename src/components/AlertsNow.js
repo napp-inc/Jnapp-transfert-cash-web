@@ -4,12 +4,12 @@ import { Alerts } from '../hooks/Alerts';
 
 const ALERT_TYPES = {
 	warning: {
-		icon: '/alertIcones/warning.svg',
+		icon: '/alertsIcones/warning.svg',
 		color: 'text-red-600',
 		backgroundColor: 'bg-red-100',
 	},
 	maintenance: {
-		icon: '/alertIcones/maintenance.svg',
+		icon: '/alertsIcones/maintenance.svg',
 		color: 'text-blue-500',
 		backgroundColor: 'bg-blue-100',
 	},
@@ -42,13 +42,14 @@ export default function NotificationsList() {
 	// 			<p className="px-4 py-8 text-center">Chargement ...</p>
 	// 		</div>
 	// 	);
-	if (isError)
-		return (
-			<div className="bg-gray-100 p-4 w-[100%] items-center">
-				<h2 className="text-black-xl font-bold mb-4 title-size">Alertes</h2>
-				<p className="px-4 py-8 text-center">Problèmes de connexion au serveur</p>
-			</div>
-		);
+
+	// if (isError)
+	// 	return (
+	// 		<div className="bg-gray-100 p-4 w-[100%] items-center">
+	// 			<h2 className="text-black-xl font-bold mb-4 title-size">Alertes</h2>
+	// 			<p className="px-4 py-8 text-center">Problèmes de connexion au serveur</p>
+	// 		</div>
+	// 	);
 
 	return (
 		<div className="bg-gray-100 p-4 w-[100%] items-center">
