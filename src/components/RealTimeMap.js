@@ -16,11 +16,10 @@ const useAgencies = () => {
 	const { data, error } = useSWR(
 		backendAgencies,
 		() =>
-			fetch(backendAgencies)
-				.then((res) => {
-					if (!res.ok) throw new Error('API error');
-					return res.json();
-				}),
+			fetch(backendAgencies).then((res) => {
+				if (!res.ok) throw new Error('API error');
+				return res.json();
+			}),
 		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
 	);
 
@@ -32,7 +31,6 @@ const useAgencies = () => {
 		lng: agence.longitude,
 	}));
 
-	// Retourner les données transformées ou la valeur par défaut
 	return error ? defaultStatic : transformedData || defaultStatic;
 };
 
@@ -53,7 +51,7 @@ const useMobileUnits = (isLoaded) => {
 		});
 
 		socket.on('mobile-data', (data) => {
-			// Mettre à jour les unités mobiles avec les nouvelles données
+			// Mettre à jour les vehicules avec les nouvelles données
 			setMobileUnits(data);
 			// Mettre à jour les alertes
 			const newAlerts = {};
@@ -67,7 +65,7 @@ const useMobileUnits = (isLoaded) => {
 
 		socket.on('disconnect', () => {
 			setIsConnected(false);
-			// Réinitialiser les unités mobiles en cas de déconnexion
+			// Réinitialiser les vehicules en cas de déconnexion
 			setMobileUnits([]);
 		});
 
