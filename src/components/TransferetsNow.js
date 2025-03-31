@@ -2,18 +2,15 @@
 import TransfertsInProgress from '../hooks/Transferts';
 import { apiBackendRoute } from '../firebase';
 
-export default function DataTable({ apiUrl }) {
+export default function DataTable({ apiUrl = `${apiBackendRoute}/api/transferts` }) {
 	const { data, loading, error } = TransfertsInProgress(apiUrl);
 
-	const columns = ['Transfert', 'Date', 'Chargé', 'Validateur', 'Véhicule', 'Sac', 'Trajet', 'Alertes', 'Montant ', 'Status'];
+	const columns = ['Transfert', 'Date', 'Chargé', 'Validateur', 'Véhicule', 'Sac', 'Trajet', 'Alertes', 'Montant', 'Status'];
 
 	return (
 		<div className="bg-gray-100 p-4 w-[100%] items-center">
 			<h2 className="text-black-xl font-bold mb-4 title-size">Transferts récents</h2>
 			<div className="transferts-table overflow-auto hide-scrollbar">
-				{loading && <p className="px-4 py-8 text-center">Chargement...</p>}
-				{error && <p className="text-red-500 mb-4"> ⚠️ {error}</p>}
-
 				<table className="bg-white-100 divide-y divide-gray-200">
 					<thead>
 						<tr>
@@ -25,10 +22,11 @@ export default function DataTable({ apiUrl }) {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200">
+						{loading && <p className="px-4 py-8 text-center">Chargement...</p>}
+						{error && <p className="text-red-500 mb-4"> ⚠️ {error}</p>}
 						{data.length === 0 ? (
 							<tr>
 								<td colSpan={columns.length} className="px-4 py-8 text-center">
-									Aucune donnée disponible
 								</td>
 							</tr>
 						) : (
