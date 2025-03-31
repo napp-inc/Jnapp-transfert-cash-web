@@ -6,7 +6,6 @@ import io from 'socket.io-client';
 import { apiBackendRoute } from '../firebase';
 import { apiKeyGoogleMaps } from '../firebase';
 import { backendAgencies } from '../firebase';
-// import GetAgencies from '../hooks/Agencies';
 
 const useAgencies = () => {
 	// Valeur par défaut statique en cas d'erreur ou de données manquantes
