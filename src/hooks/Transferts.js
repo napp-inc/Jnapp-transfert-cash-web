@@ -10,7 +10,7 @@ const TransfertsInProgress = (apiUrl) => {
 			try {
 				const response = await fetch(apiUrl);
 				if (!response.ok) {
-					throw new Error('Network response was not ok');
+					throw new Error('Problemes de connexion');
 				}
 				const result = await response.json();
 				setData(result);
