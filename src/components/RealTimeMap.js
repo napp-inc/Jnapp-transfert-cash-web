@@ -13,31 +13,6 @@ const defaultStatic = [
 	{ id: 4, name: 'RAWBANK UPC', lat: -4.335108, lng: 15.29656 },
 ];
 
-const defaultMobile = [
-	{
-		id: 1,
-		name: 'Unité régulière',
-		position: { lat: -4.389857, lng: 15.313761 },
-		path: [
-			{ lat: -4.389857, lng: 15.313761 },
-			{ lat: -4.407689, lng: 15.256341 },
-		],
-		speed: 30,
-		lastMove: Date.now(),
-	},
-	{
-		id: 2,
-		name: 'Unité irrégulière',
-		position: { lat: -4.441887, lng: 15.259098 },
-		path: [
-			{ lat: -4.441887, lng: 15.259098 },
-			{ lat: -4.335108, lng: 15.29656 },
-		],
-		speed: 0,
-		lastMove: Date.now() - 600000, // Arrêt de 10min
-	},
-];
-
 const useAgencies = () => {
 	const { data, error } = useSWR(
 		'/agencies',
@@ -53,7 +28,7 @@ const useAgencies = () => {
 };
 
 const useMobileUnits = (isLoaded) => {
-	const [mobileUnits, setMobileUnits] = useState(defaultMobile);
+	const [mobileUnits, setMobileUnits] = useState([]);
 	const [alerts, setAlerts] = useState({});
 	const [isConnected, setIsConnected] = useState(true);
 	const [directions, setDirections] = useState({});
@@ -68,50 +43,43 @@ const useMobileUnits = (isLoaded) => {
 			socket.emit('get-mobile-units');
 		});
 
-		socket.on('mobile-data', (data) => setMobileUnits(data));
+		socket.on('mobile-data', (data) => {
+			// Mise à jour des véhicules avec les nouvelles données
+			setMobileUnits(data);
+			// Mise à jour des alertes
+			const newAlerts = {};
+			data.forEach((unit) => {
+				if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
+					newAlerts[unit.id] = `ALERTE : ${unit.name} immobilisé`;
+				}
+			});
+			setAlerts(newAlerts);
+		});
 
 		socket.on('disconnect', () => {
 			setIsConnected(false);
-			setMobileUnits(defaultMobile);
+			// Réinitialiser les véhicules si ddéconnexion
+			setMobileUnits([]);
 		});
-
-		let interval;
-		if (!isConnected) {
-			interval = setInterval(() => {
-				setMobileUnits((prev) =>
-					prev.map((unit) => ({
-						...unit,
-						position: unit.speed > 0 ? getNextPosition(unit) : unit.position,
-					}))
-				);
-			}, 5000);
-		}
 
 		return () => {
 			socket.disconnect();
-			clearInterval(interval);
 		};
-	}, [isLoaded, isConnected]);
-
-	const getNextPosition = (unit) => {
-		const currentIndex = unit.path.findIndex((p) => p.lat === unit.position.lat && p.lng === unit.position.lng);
-		return unit.path[currentIndex + 1] || unit.path[0];
-	};
+	}, [isLoaded]);
 
 	useEffect(() => {
 		if (!isLoaded || !isConnected) return;
 
 		const fetchRoute = async (unit) => {
 			try {
-				if (!google?.maps?.DirectionsService) {
-					console.warn('API Google Maps non prête');
+				if (!window.google?.maps?.DirectionsService) {
 					return;
 				}
 
-				const directionsService = new google.maps.DirectionsService();
+				const directionsService = new window.google.maps.DirectionsService();
 				const result = await directionsService.route({
-					origin: new google.maps.LatLng(unit.path[0].lat, unit.path[0].lng),
-					destination: new google.maps.LatLng(unit.path[unit.path.length - 1].lat, unit.path[unit.path.length - 1].lng),
+					origin: new window.google.maps.LatLng(unit.path[0].lat, unit.path[0].lng),
+					destination: new window.google.maps.LatLng(unit.path[unit.path.length - 1].lat, unit.path[unit.path.length - 1].lng),
 					travelMode: 'DRIVING',
 					drivingOptions: {
 						departureTime: new Date(),
@@ -132,18 +100,6 @@ const useMobileUnits = (isLoaded) => {
 		mobileUnits.forEach((unit) => fetchRoute(unit));
 	}, [mobileUnits, isConnected, isLoaded]);
 
-	useEffect(() => {
-		if (!isConnected) return;
-
-		const newAlerts = {};
-		mobileUnits.forEach((unit) => {
-			if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
-				newAlerts[unit.id] = `ALERTE : ${unit.name} immobilisé`;
-			}
-		});
-		setAlerts(newAlerts);
-	}, [mobileUnits, isConnected]);
-
 	return { mobileUnits, alerts, directions, etas };
 };
 
@@ -163,7 +119,6 @@ export default function MapComponent() {
 
 	const [filters, setFilters] = useState({
 		showStops: true,
-		showDelays: true,
 	});
 
 	const agencies = useAgencies();
@@ -194,7 +149,7 @@ export default function MapComponent() {
 						position={{ lat: agency.lat, lng: agency.lng }}
 						icon={{
 							url: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png',
-							scaledSize: new google.maps.Size(30, 30),
+							scaledSize: new window.google.maps.Size(30, 30),
 						}}
 					/>
 				))}
@@ -220,7 +175,7 @@ export default function MapComponent() {
 									url: alerts[unit.id]
 										? 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-red.png'
 										: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-yellow.png',
-									scaledSize: new google.maps.Size(30, 30),
+									scaledSize: new window.google.maps.Size(30, 30),
 								}}
 								label={{
 									text: `${Math.round(etas[unit.id] / 60)} min`,
