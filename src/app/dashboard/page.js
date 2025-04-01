@@ -1,9 +1,9 @@
 'use client'; // Obligatoire ici
 
-import DashboardContent from '../../components/dashbordComponents/DashboardContent';
+import DashboardContent from '../../components/DashboardContent';
 //import DashboardMenu from '../../components/DashboardMenu';
 //import RealtimeMap from '../../components/RealTimeMap';
-import Menu from '../../components/dashbordComponents/DashboardMenu';
+import Menu from '../../components/DashboardMenu';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { AuthProvider } from '../../contexts/AuthContext';
 

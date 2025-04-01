@@ -2,9 +2,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import useMediaQuery from '../../hooks/UseMediaQuery';
+import useMediaQuery from '../hooks/UseMediaQuery';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const MenuItem = ({ src, alt, href, label, isActive }) => {
 	return (

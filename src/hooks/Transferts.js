@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 
-const TransfertsInProgress = (apiUrl) => {
+const Transferts = (apiUrl) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -27,4 +27,4 @@ const TransfertsInProgress = (apiUrl) => {
 	return { data, loading, error };
 };
 
-export default TransfertsInProgress;
+export default Transferts;

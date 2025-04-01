@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
 import useSWR from 'swr';
 import io from 'socket.io-client';
-import { apiBackendRoute } from '../../endPointsAndKeys';
-import { apiKeyGoogleMaps } from '../../endPointsAndKeys';
-import { backendAgencies } from '../../endPointsAndKeys';
+import { apiBackendRoute } from '../endPointsAndKeys';
+import { apiKeyGoogleMaps } from '../endPointsAndKeys';
+import { backendAgencies } from '../endPointsAndKeys';
 
 const useAgencies = () => {
 	// Valeur par défaut du point  en cas d'erreur ou de données manquantes
