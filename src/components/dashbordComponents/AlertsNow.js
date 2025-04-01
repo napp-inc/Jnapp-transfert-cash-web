@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { Alerts } from '../hooks/Alerts';
+import { Alerts } from '../../hooks/Alerts';
 
 const ALERT_TYPES = {
 	warning: {

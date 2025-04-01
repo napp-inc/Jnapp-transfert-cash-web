@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { backendLogin } from '../endPointsAndKeys';
-import { useAuth } from '../contexts/AuthContext';
+import { backendLogin } from '../../endPointsAndKeys';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginForm() {
 	const [email, setEmail] = useState('');
@@ -36,7 +36,7 @@ export default function LoginForm() {
 		<div className="bg-white flex justify-center items-center h-screen sm:bg-gray-100">
 			<div className="bg-white p-8 rounded-lg sm:shadow-md w-full max-w-md">
 				<h1 className="text-2xl font-bold text-center mb-6">Connexion</h1>
-				<img src="https://i.ibb.co/1ts0fBm9/Frame-36.png" alt="Logo Kin Distribution" className="w-24 h-24 mx-auto mb-6 rounded-full" />
+				<img src="/appLogo/J-napps-tracker-logo.png" alt="Logo Kin Distribution" className="w-24 h-24 mx-auto mb-6 rounded-full" />
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<input
 						type="email"

@@ -3,14 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
 import useSWR from 'swr';
 import io from 'socket.io-client';
-import { apiBackendRoute } from '../endPointsAndKeys';
-import { apiKeyGoogleMaps } from '../endPointsAndKeys';
-import { backendAgencies } from '../endPointsAndKeys';
+import { apiBackendRoute } from '../../endPointsAndKeys';
+import { apiKeyGoogleMaps } from '../../endPointsAndKeys';
+import { backendAgencies } from '../../endPointsAndKeys';
 
 const useAgencies = () => {
-	// Valeur par défaut statique en cas d'erreur ou de données manquantes
+	// Valeur par défaut du point  en cas d'erreur ou de données manquantes
 	const defaultStatic = [{ id: 1, name: 'AGENCE PAR DÉFAUT', lat: 0, lng: 0 }];
-
 	// SWR pour récupérer les données
 	const { data, error } = useSWR(
 		backendAgencies,
@@ -21,7 +20,6 @@ const useAgencies = () => {
 			}),
 		{ revalidateOnFocus: false } // Désactiver la revalidation lors du focus
 	);
-
 	// Transformation des données (si elles existent)
 	const transformedData = data?.agences?.map((agence, index) => ({
 		id: index + 1, // ID séquentiel
@@ -155,7 +153,7 @@ export default function MapComponent() {
 						position={{ lat: agency.lat, lng: agency.lng }}
 						icon={{
 							url: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png',
-							scaledSize: new window.google.maps.Size(30, 30),
+							scaledSize: new window.google.maps.Size(50, 50),
 						}}
 					/>
 				))}

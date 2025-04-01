@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { apiBackendRoute } from '../endPointsAndKeys';
+import { apiBackendRoute } from '../../endPointsAndKeys';
 
 const PreviewItems = ({ src, alt, name, count, style }) => {
 	return (

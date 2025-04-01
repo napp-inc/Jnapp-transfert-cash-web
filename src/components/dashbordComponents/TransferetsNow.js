@@ -1,6 +1,6 @@
 'use client';
-import TransfertsInProgress from '../hooks/Transferts';
-import { apiBackendRoute } from '../endPointsAndKeys';
+import TransfertsInProgress from '../../hooks/Transferts';
+import { apiBackendRoute } from '../../endPointsAndKeys';
 
 export default function DataTable({ apiUrl = `${apiBackendRoute}/api/transferts` }) {
 	const { data, loading, error } = TransfertsInProgress(apiUrl);
