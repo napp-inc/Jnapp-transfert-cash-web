@@ -21,9 +21,8 @@ export default function LoginForm() {
 			});
 
 			if (!response.ok) throw new Error('Identifiants invalides');
-
 			console.log(response.json());
-
+			
 			const { token } = await response.json();
 			localStorage.setItem('authToken', token); // Stockage du token JWT
 			console.log(token);
