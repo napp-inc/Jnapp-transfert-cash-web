@@ -16,11 +16,11 @@ export default function AlertsList() {
                 {alerts.length === 0 ? (
                     <div className="text-center text-gray-500 py-4">Aucune alerte</div>
                 ) : isError ?
-                    <div className={`flex items-center p-4 mb-4 rounded-lg items-center bg-gray-100`}>
+                    <div className={`flex items-center p-4 mb-4 rounded-lg bg-gray-100`}>
                         <Heading level="h3" children="Problèmes de connexion"  className="font-bold text-black-200" />
                     </div>
                     : isLoading ?
-                        <div className={`flex items-center p-4 mb-4 rounded-lg items-center bg-gray-100`}>
+                        <div className={`flex items-center p-4 mb-4 rounded-lg bg-gray-100`}>
                             <Heading level="h3" children="Chargement ..." className="font-bold text-black-200" />
                         </div>
                         :

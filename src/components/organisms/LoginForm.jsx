@@ -36,7 +36,7 @@ export default function LoginForm() {
         <div className="bg-white flex justify-center items-center h-screen sm:bg-gray-100">
             <div className="bg-white p-8 rounded-lg sm:shadow-md w-full max-w-md">
                 <h1 className="text-2xl font-bold text-center mb-6">Connexion</h1>
-                <Logo src="/appLogo/J-napps-tracker-logo.png" alt="Logo Kin Distribution" size="w-24 h-24" />
+                <Logo src="/appLogo/J-napps-tracker-logo.png" alt="Logo Kin Distribution" size="w-24 h-24  mx-auto mb-6 " />
                 <LoginFormFields email={email} setEmail={setEmail} password={password} setPassword={setPassword} onSubmit={handleSubmit} />
             </div>
         </div>

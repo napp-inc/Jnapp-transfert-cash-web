@@ -6,7 +6,7 @@ const AlertItem = ({ type, title, subtitle, timestamp }) => {
     const config = TypesOfAlerts[type] || TypesOfAlerts.warning;
 
     return (
-        <div className={`flex items-center p-4 mb-4 rounded-lg items-center ${config.backgroundColor}`}>
+        <div className={`flex items-center p-4 mb-4 rounded-lg ${config.backgroundColor}`}>
             <div className="mr-4">
                 <Image src={config.icon} alt={`${type} icon`} width={48} height={48} className="rounded-full" priority />
             </div>

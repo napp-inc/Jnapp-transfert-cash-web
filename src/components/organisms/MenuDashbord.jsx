@@ -33,10 +33,10 @@ export default function Menu() {
     };
 
     return (
-        <div className="bg-white p-4 rounded shadow-md w-5/5 sm:w-1/5">
-            <div className="flex items-center space-x-2 mb-4" onClick={toggleVisibility}>
-                <Logo src='https://i.ibb.co/1ts0fBm9/Frame-36.png' alt="Logo Kin Distribution" size="w-8 h-8 rounded-full" />
-                <h1 className="text-xl font-bold">J-napps Tracker</h1>
+        <div className="bg-white p-4 rounded shadow-md w-5/5 sm:w-1/5 test">
+            <div className="flex items-center space-x-2 mb-4 test" onClick={toggleVisibility}>
+                <Logo src='https://i.ibb.co/1ts0fBm9/Frame-36.png test' style={{ border: '1px solid green' }} alt="Logo Kin Distribution" size="w-8 h-8 rounded-full" />
+                <h1 className="text-xl font-bold test">J-napps Tracker</h1>
             </div>
 
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />
