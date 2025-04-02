@@ -10,7 +10,7 @@ export default function LoginFormFields({ email, setEmail, password, setPassword
             <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
             <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mot de passe" />
             <CustomLink href="#" text="Mot de passe oublié ?" />
-            <Button type="submit" text="Se connecter" />
+            <Button text="Se connecter" type="submit" />
         </form>
     );
 }

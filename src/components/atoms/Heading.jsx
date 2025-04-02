@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Heading = ({ level = 1, onClick, children, className = '', ...props }) => {
+const Heading = ({ level = "h1", onClick, children, className = '', ...props }) => {
     const Tag = `${level}`;
 
     return React.createElement(
