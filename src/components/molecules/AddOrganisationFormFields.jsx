@@ -6,6 +6,8 @@ import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 
+import addOrganisationRoute from '../../endPointsAndKeys';
+
 
 export default function AddOrganisationFormFields() {
     const [formData, setFormData] = useState({
@@ -50,7 +52,7 @@ export default function AddOrganisationFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
-            const response = await fetch('/api/organisations', {
+            const response = await fetch(addOrganisationRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

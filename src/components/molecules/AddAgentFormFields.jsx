@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
+import addAgentRoute from '../../endPointsAndKeys';
 
 export default function AddAgentFormFields() {
     const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ export default function AddAgentFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
-            const response = await fetch('/api/agents', {
+            const response = await fetch(addAgentRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
