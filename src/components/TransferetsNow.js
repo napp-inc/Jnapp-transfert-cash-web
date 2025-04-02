@@ -77,5 +77,3 @@ export default function TransfertsTable({ apiUrl = "api/url" }) {
 		</div>
 	);
 }
-
-

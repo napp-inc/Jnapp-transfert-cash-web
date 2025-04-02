@@ -13,21 +13,18 @@ export function AuthProvider({ children }) {
 	useEffect(() => {
 		const checkAuthStatus = async () => {
 
-            if (typeof window !== 'undefined'){
-                const token = localStorage.getItem('authToken');
-			if (token) {
-				try {
-					// Optionnel : Valider le token avec le backend
-					// const response = await fetch('/api/validate-token', { headers: { Authorization: `Bearer ${token}` } });
-					// if (response.ok) setIsAuthenticated(true);
-					setIsAuthenticated(true);
-				} catch (error) {
-					console.error('Token validation failed:', error);
+			if (typeof window !== 'undefined') {
+				const token = localStorage.getItem('authToken');
+				if (token) {
+					try {
+						setIsAuthenticated(true);
+					} catch (error) {
+						console.error('Token validation failed:', error);
+					}
 				}
+				setLoading(false);
 			}
-			setLoading(false);
-            }
-			
+
 		};
 		checkAuthStatus();
 	}, []);
