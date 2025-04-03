@@ -1,14 +1,15 @@
-
-"use client";
+"use client"
+import React from 'react';
 import { useState } from 'react';
 
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
-import { useRouter } from 'next/navigation';
-import { addVehiclesRoute } from '../../endPointsAndKeys';
 
-export default function AddVehicleFields() {
+//import { useRouter } from 'next/navigation';
+import { addVehicleRoute } from '../../endPointsAndKeys';
+
+export default function AddVehicleForm() {
     const [formData, setFormData] = useState({
         marque: '',
         modele: '',
@@ -17,11 +18,10 @@ export default function AddVehicleFields() {
             reference: '',
             code: '',
             designation: ''
-        },
+        }
     });
-    const router = useRouter();
 
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -42,19 +42,17 @@ export default function AddVehicleFields() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Logique d'envoi des données
         console.log('Données à envoyer:', formData);
 
         try {
-            const response = await fetch(addVehiclesRoute, {
+            const response = await fetch(addVehicleRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
             if (response.ok) {
-                alert('Véhicule créé avec succès');
-                // Réinitialisation du formulaire
+                alert('Véhicule ajouté avec succès');
                 setFormData({
                     marque: '',
                     modele: '',
@@ -63,101 +61,99 @@ export default function AddVehicleFields() {
                         reference: '',
                         code: '',
                         designation: ''
-                    },
-                    status: 'FREE'
+                    }
                 });
-                router.push('/vehicules');
             }
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Erreur lors de la création');
-            router.push('/vehicules');
+            alert('Erreur lors de l\'ajout du véhicule');
         }
     };
 
     return (
-        <div className="max-w-3/4 mx-auto mask-t-from-5% p-6 bg-white shadow-lg rounded-lg">
+        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center justify-between mb-12">
-                    <Heading level="h2" children="Ajout d'un nouveau véhicule" className="px-4 mt-4 text-xl font-bold text-center text-orange-600" />
+                    <Heading level="h2" children="Ajouter un nouveau véhicule" className="px-4 mt-4 text-xl font-bold text-center text-orange-600" />
 
                     <div className="w-1/4">
                         <Button text="Enregistrer" type="submit" />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="col-span-full md:col-span-1">
-                        <Input
-                            type="text"
-                            name="marque"
-                            value={formData.marque}
-                            onChange={handleInputChange}
-                            placeholder="Marque/Fabricant"
-                        />
-                    </div>
+                {/* Section Informations du véhicule */}
+                <div className="bg-gray-100 p-6 rounded-lg mb-8">
+                    <Heading level="h3" children="Informations du véhicule" className="px-4 mb-6 text-lg font-bold text-orange-600" />
 
-                    <div className="col-span-full md:col-span-1">
-                        <Input
-                            type="text"
-                            name="modele"
-                            value={formData.modele}
-                            onChange={handleInputChange}
-                            placeholder="Modèle du véhicule"
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="marque"
+                                value={formData.marque}
+                                onChange={handleChange}
+                                placeholder="Marque"
+                            />
+                        </div>
 
-                    <div className="col-span-full">
-                        <Input
-                            type="text"
-                            name="immatriculation"
-                            value={formData.immatriculation}
-                            onChange={handleInputChange}
-                            placeholder="Numéro d'immatriculation"
-                        />
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="modele"
+                                value={formData.modele}
+                                onChange={handleChange}
+                                placeholder="Modèle"
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="immatriculation"
+                                value={formData.immatriculation}
+                                onChange={handleChange}
+                                placeholder="Immatriculation"
+                            />
+                        </div>
                     </div>
                 </div>
 
+                {/* Section Informations organisation */}
+                <div className="bg-gray-100 p-6 rounded-lg mb-8">
+                    <Heading level="h3" children="Informations organisation" className="px-4 mb-6 text-lg font-bold text-orange-600" />
 
-                <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                    <Heading level="h3" children="Informations de l'organisation" className="text-lg font-BOLD text-gray-800 mb-4" />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="col-span-1">
                             <Input
                                 type="text"
                                 name="reference"
                                 value={formData.organisation.reference}
                                 onChange={handleOrganisationChange}
-                                placeholder='Numéro de réference'
+                                placeholder="Référence organisation"
                             />
                         </div>
 
-                        <div>
-                            <div>
-                                <Input
-                                    type="text"
-                                    name="code"
-                                    value={formData.organisation.reference}
-                                    onChange={handleOrganisationChange}
-                                    placeholder='Code'
-                                />
-                            </div>
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="code"
+                                value={formData.organisation.code}
+                                onChange={handleOrganisationChange}
+                                placeholder="Code organisation"
+                            />
                         </div>
 
-                        <div className="col-span-full">
+                        <div className="col-span-1">
                             <Input
                                 type="text"
                                 name="designation"
-                                value={formData.organisation.reference}
+                                value={formData.organisation.designation}
                                 onChange={handleOrganisationChange}
-                                placeholder="Désignation de l'entreprise/organisation"
+                                placeholder="Désignation organisation"
                             />
                         </div>
                     </div>
                 </div>
-
-
             </form>
         </div>
     );

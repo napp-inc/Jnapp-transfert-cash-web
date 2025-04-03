@@ -9,23 +9,24 @@ import Logo from '../atoms/Logo';
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	// const [error, setError] = useState('');
-	const router = useRouter();
+    const [password, setPassword] = useState('');
+    // const [error, setError] = useState('');
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
-		e.preventDefault();
-		try {
-			await signInWithEmailAndPassword(auth, email, password);
-			console.log('connexion réussie');
-			router.push('/dashboard');
-		} catch (error) {
-			console.log('User signed in error:', error);
-			console.error('Login error:', error);
-			alert('Connexion echouée');
+        e.preventDefault();
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken();
+            localStorage.setItem('idToken', idToken);
+            router.push('/dashboard');
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Connexion échouée');
             router.push('/');
-		}
-	};
+        }
+    };
 
     return (
         <div className="bg-white flex justify-center items-center h-screen sm:bg-gray-100">
@@ -36,4 +37,5 @@ export default function LoginForm() {
             </div>
         </div>
     );
+
 }

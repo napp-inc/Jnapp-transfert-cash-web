@@ -6,7 +6,7 @@ import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 import { useRouter } from 'next/navigation';
 import { addAgentRoute } from '../../endPointsAndKeys';
-import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function AddAgentFormFields() {
     const [formData, setFormData] = useState({
@@ -56,22 +56,26 @@ export default function AddAgentFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
+            const { email, password } = formData;
+            const auth = getAuth();
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
             const response = await fetch(addAgentRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    ...formData,
+                    uid: userCredential.user.uid,
+                }),
             });
 
-            const data = await response.json();
-            console.log(data)
-
             if (response.ok) {
-                const customToken = data.customToken;
-                const idToken = await signInWithCustomToken(customToken);
-                localStorage.setItem('idToken', idToken);
                 alert('Agent créé avec succès');
+                await signInWithEmailAndPassword(auth, email, password);
             }
-            alert('Agent non créé');
+            else {
+                alert('Agent non créé');
+            }
 
             setFormData({
                 prenom: '',
@@ -80,6 +84,7 @@ export default function AddAgentFormFields() {
                 email: '',
                 telephone: '',
                 adresse: '',
+                password: '',
                 agence: {
                     reference: '',
                     code: '',

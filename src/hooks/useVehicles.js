@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import getAllVehiclesRoute from '../endPointsAndKeys';
+import { getAllVehiclesRoute } from '../endPointsAndKeys';
 
 const useVehicles = () => {
     const [data, setData] = useState([]);
