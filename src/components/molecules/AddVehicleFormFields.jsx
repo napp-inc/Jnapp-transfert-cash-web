@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
+import { useRouter } from 'next/navigation';
 import { addVehiclesRoute } from '../../endPointsAndKeys';
 
 export default function AddVehicleFields() {
@@ -18,6 +19,7 @@ export default function AddVehicleFields() {
             designation: ''
         },
     });
+    const router = useRouter();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -64,10 +66,12 @@ export default function AddVehicleFields() {
                     },
                     status: 'FREE'
                 });
+                router.push('/vehicules');
             }
         } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur lors de la création');
+            router.push('/vehicules');
         }
     };
 
