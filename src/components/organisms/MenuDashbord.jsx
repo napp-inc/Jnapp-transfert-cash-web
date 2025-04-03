@@ -43,7 +43,10 @@ export default function Menu() {
 
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 <MenuItem src="/menuIcones/dashboardIconeInactive.svg" alt="icone menu" href="/dashboard" label="Tableau de bord" />
-                <MenuItem src="/menuIcones/vehicleIconeInactive.svg" alt="icone menu" href="/vehicules" label="Véhicules" />
+                <MenuItem src="/menuIcones/vehicleIconeInactive.svg" alt="icone menu" href="/vehicules/add-vehicle" label="Véhicules" />
+                <MenuItem src="/menuIcones/agentIconeInactive.svg" alt="icone menu" href="/agents/create-agent" label="Agents" />
+                <MenuItem src="/menuIcones/agencyIconeInactive.svg" alt="icone menu" href="/agency/add-agency" label="Agences" />
+                <MenuItem src="/menuIcones/agencyIconeInactive.svg" alt="icone menu" href="/organisation/add-organisation" label="Organisation" />
                 <MenuItem src="/menuIcones/transfertIconeInactive.svg" alt="icone menu" href="/transferts" label="Transferts" />
                 <MenuItem src="/menuIcones/alertsIconeInactive.svg" alt="icone menu" href="/alerts" label="Alertes" />
                 <MenuItem src="/menuIcones/reportsIconeInactive.svg" alt="icone menu" href="/reports" label="Rapports" />

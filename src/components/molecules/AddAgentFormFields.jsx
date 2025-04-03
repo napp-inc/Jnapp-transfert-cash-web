@@ -4,7 +4,9 @@ import { useState } from 'react';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
+import { useRouter } from 'next/navigation';
 import { addAgentRoute } from '../../endPointsAndKeys';
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 export default function AddAgentFormFields() {
     const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ export default function AddAgentFormFields() {
         email: '',
         telephone: '',
         adresse: '',
+        password: '',
         agence: {
             reference: '',
             code: '',
@@ -59,33 +62,43 @@ export default function AddAgentFormFields() {
                 body: JSON.stringify(formData)
             });
 
+            const data = await response.json();
+            console.log(data)
+
             if (response.ok) {
+                const customToken = data.customToken;
+                const idToken = await signInWithCustomToken(customToken);
+                localStorage.setItem('idToken', idToken);
                 alert('Agent créé avec succès');
-                setFormData({
-                    prenom: '',
-                    nom: '',
-                    postnom: '',
-                    email: '',
-                    telephone: '',
-                    adresse: '',
-                    agence: {
-                        reference: '',
-                        code: '',
-                        designation: ''
-                    },
-                    organisation: {
-                        reference: '',
-                        code: '',
-                        designation: ''
-                    },
-                    role: {
-                        reference: '',
-                        code: '',
-                        designation: ''
-                    }
-                });
             }
-        } catch (error) {
+            alert('Agent non créé');
+
+            setFormData({
+                prenom: '',
+                nom: '',
+                postnom: '',
+                email: '',
+                telephone: '',
+                adresse: '',
+                agence: {
+                    reference: '',
+                    code: '',
+                    designation: ''
+                },
+                organisation: {
+                    reference: '',
+                    code: '',
+                    designation: ''
+                },
+                role: {
+                    reference: '',
+                    code: '',
+                    designation: ''
+                }
+            });
+
+        }
+        catch (error) {
             console.error('Erreur:', error);
             alert('Erreur lors de la création');
         }
@@ -175,6 +188,17 @@ export default function AddAgentFormFields() {
                                 value={formData.adresse}
                                 onChange={handleChange}
                                 placeholder="Adresse"
+                                required
+                            />
+                        </div>
+
+                        <div className="col-span-full md:col-span-1">
+                            <Input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Mot de passe"
                                 required
                             />
                         </div>
