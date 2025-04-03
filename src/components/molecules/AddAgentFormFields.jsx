@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
-import addAgentRoute from '../../endPointsAndKeys';
+import { addAgentRoute } from '../../endPointsAndKeys';
 
 export default function AddAgentFormFields() {
     const [formData, setFormData] = useState({

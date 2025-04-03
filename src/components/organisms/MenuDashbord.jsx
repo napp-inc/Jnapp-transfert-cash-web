@@ -43,10 +43,10 @@ export default function Menu() {
 
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 <MenuItem src="/menuIcones/dashboardIconeInactive.svg" alt="icone menu" href="/dashboard" label="Tableau de bord" />
-                <MenuItem src="/menuIcones/vehicleIconeInactive.svg" alt="icone menu" href="#" label="Véhicules" />
-                <MenuItem src="/menuIcones/transfertIconeInactive.svg" alt="icone menu" href="#" label="Transferts" />
-                <MenuItem src="/menuIcones/alertsIconeInactive.svg" alt="icone menu" href="#" label="Alertes" />
-                <MenuItem src="/menuIcones/reportsIconeInactive.svg" alt="icone menu" href="#" label="Rapports" />
+                <MenuItem src="/menuIcones/vehicleIconeInactive.svg" alt="icone menu" href="/vehicules" label="Véhicules" />
+                <MenuItem src="/menuIcones/transfertIconeInactive.svg" alt="icone menu" href="/transferts" label="Transferts" />
+                <MenuItem src="/menuIcones/alertsIconeInactive.svg" alt="icone menu" href="/alerts" label="Alertes" />
+                <MenuItem src="/menuIcones/reportsIconeInactive.svg" alt="icone menu" href="/reports" label="Rapports" />
             </MenuSection>
 
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />

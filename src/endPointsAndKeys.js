@@ -6,4 +6,5 @@ export const addVehiclesRoute = "http://localhost:3005";
 export const addOrganisationRoute = "https://organisations-tfcv6lmhba-uc.a.run.app/new-organisation";
 export const addAgencyRoute = "https://agences-tfcv6lmhba-uc.a.run.app/new-agence";
 export const addAgentRoute = "https://agent-tfcv6lmhba-uc.a.run.app/register";
+export const getAllVehicles = "https://vehicules-all";
 

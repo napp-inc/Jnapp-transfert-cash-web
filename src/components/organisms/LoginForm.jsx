@@ -1,36 +1,31 @@
 'use client';
-
 import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { backendLogin } from '../../endPointsAndKeys';
-import { useAuth } from '../../contexts/AuthContext';
+import { auth } from '../../firebase';
+
 import LoginFormFields from '../molecules/LoginFormFields';
 import Logo from '../atoms/Logo';
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const router = useRouter();
-    const { isAuthenticated, login, logout } = useAuth();
+	const [password, setPassword] = useState('');
+	// const [error, setError] = useState('');
+	const router = useRouter();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch(`${backendLogin}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) throw new Error('Identifiants invalides');
-            const { token } = await response.json();
-            localStorage.setItem('authToken', token);
-            router.push('/dashboard');
-        } catch (error) {
-            console.error('Erreur de connexion:', error);
-            alert('Connexion échouée : ' + error.message);
-        }
-    };
+		e.preventDefault();
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+			console.log('connexion réussie');
+			router.push('/dashboard');
+		} catch (error) {
+			console.log('User signed in error:', error);
+			console.error('Login error:', error);
+			alert('Connexion echouée');
+            router.push('/');
+		}
+	};
 
     return (
         <div className="bg-white flex justify-center items-center h-screen sm:bg-gray-100">
