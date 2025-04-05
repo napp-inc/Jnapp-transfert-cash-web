@@ -60,13 +60,7 @@ export default function AddPermissionFormFields() {
                 </div>
 
                 {/* Section Informations de la permission */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Détails de la permission"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-
+                <div className="p-6 rounded-lg mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <Input

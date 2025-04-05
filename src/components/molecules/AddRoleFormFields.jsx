@@ -45,7 +45,7 @@ export default function AddRoleFormFields() {
     };
 
     return (
-        <div className="mx-auto sm:p-6 py-8 bg-white shadow-lg rounded-lg w-full max-w-md">
+        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center justify-between mb-12">
                     <Heading
@@ -60,13 +60,7 @@ export default function AddRoleFormFields() {
                 </div>
 
                 {/* Section Informations du rôle */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Informations du rôle"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-
+                <div className="p-6 rounded-lg mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <Input
