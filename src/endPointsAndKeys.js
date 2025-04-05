@@ -10,7 +10,6 @@ export const getAllVehiclesRoute = "https://vehicules-all";
 export const initTransfertRoute = "http://TRUCS-A-REMPLIR";
 export const counterCheckTransfertRoute = "http://TRUCS-A-REMPLIR";
 export const registerRoute = "https://organisation-tfcv6lmhba-uc.a.run.app/create";
-
 export const addRoleRoute = "https://superadmin-tfcv6lmhba-uc.a.run.app/role ";
 export const addPermissionRoute = "https://superadmin-tfcv6lmhba-uc.a.run.app/permission ";
 
