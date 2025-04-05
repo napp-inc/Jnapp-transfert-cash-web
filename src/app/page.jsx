@@ -1,9 +1,10 @@
 "use client";
 
-import LoginForm from "../components/organisms/LoginForm";
+import LandingPage from "../components/organisms/Landing";
+
 
 export default function Home() {
-  return (
-    <LoginForm />
-  );
+    return (
+        <LandingPage />
+    );
 }

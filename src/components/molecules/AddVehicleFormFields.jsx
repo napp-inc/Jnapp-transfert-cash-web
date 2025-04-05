@@ -57,11 +57,6 @@ export default function AddVehicleForm() {
                     marque: '',
                     modele: '',
                     immatriculation: '',
-                    organisation: {
-                        reference: '',
-                        code: '',
-                        designation: ''
-                    }
                 });
             }
         } catch (error) {
@@ -113,43 +108,6 @@ export default function AddVehicleForm() {
                                 value={formData.immatriculation}
                                 onChange={handleChange}
                                 placeholder="Immatriculation"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Section Informations organisation */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading level="h3" children="Informations organisation" className="px-4 mb-6 text-lg font-bold text-orange-600" />
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="reference"
-                                value={formData.organisation.reference}
-                                onChange={handleOrganisationChange}
-                                placeholder="Référence organisation"
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.organisation.code}
-                                onChange={handleOrganisationChange}
-                                placeholder="Code organisation"
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="designation"
-                                value={formData.organisation.designation}
-                                onChange={handleOrganisationChange}
-                                placeholder="Désignation organisation"
                             />
                         </div>
                     </div>

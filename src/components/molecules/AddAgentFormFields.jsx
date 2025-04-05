@@ -90,11 +90,6 @@ export default function AddAgentFormFields() {
                     code: '',
                     designation: ''
                 },
-                organisation: {
-                    reference: '',
-                    code: '',
-                    designation: ''
-                },
                 role: {
                     reference: '',
                     code: '',
@@ -248,50 +243,6 @@ export default function AddAgentFormFields() {
                                 value={formData.agence.designation}
                                 onChange={handleNestedChange('agence')}
                                 placeholder="Désignation agence"
-                                required
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Organisation */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Organisation"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="reference"
-                                value={formData.organisation.reference}
-                                onChange={handleNestedChange('organisation')}
-                                placeholder="Référence organisation"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.organisation.code}
-                                onChange={handleNestedChange('organisation')}
-                                placeholder="Code organisation"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-2 md:col-span-1">
-                            <Input
-                                type="text"
-                                name="designation"
-                                value={formData.organisation.designation}
-                                onChange={handleNestedChange('organisation')}
-                                placeholder="Désignation organisation"
                                 required
                             />
                         </div>

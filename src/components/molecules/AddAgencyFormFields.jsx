@@ -120,46 +120,6 @@ export default function AddAgenceFormFields() {
                     </div>
                 </div>
 
-                {/* Organisation rattachée */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Organisation rattachée"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="reference"
-                                value={formData.organisation.reference}
-                                onChange={handleOrganisationChange}
-                                placeholder="Référence organisation"
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.organisation.code}
-                                onChange={handleOrganisationChange}
-                                placeholder="Code organisation"
-                            />
-                        </div>
-
-                        <div className="col-span-2 md:col-span-1">
-                            <Input
-                                type="text"
-                                name="designation"
-                                value={formData.organisation.designation}
-                                onChange={handleOrganisationChange}
-                                placeholder="Désignation organisation"
-                            />
-                        </div>
-                    </div>
-                </div>
             </form>
         </div>
     );

@@ -9,4 +9,6 @@ export const addAgentRoute = "https://agent-tfcv6lmhba-uc.a.run.app/register";
 export const getAllVehiclesRoute = "https://vehicules-all";
 export const initTransfertRoute = "http://TRUCS-A-REMPLIR";
 export const counterCheckTransfertRoute = "http://TRUCS-A-REMPLIR";
+export const registerRoute = "https://organisation-tfcv6lmhba-uc.a.run.app/create";
+
 

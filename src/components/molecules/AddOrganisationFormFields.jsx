@@ -88,7 +88,7 @@ export default function AddOrganisationFormFields() {
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center justify-between mb-12">
-                    <Heading level="h2" children="Enregistrer une nouvelle organisation" className="px-4 mt-4 text-xl font-bold text-center text-orange-600" />
+                    <Heading level="h2" children="Créer une organisation" className="px-4 mt-4 text-xl font-bold text-center text-orange-600" />
 
                     <div className="w-1/4">
                         <Button text="Enregistrer" type="submit" />
