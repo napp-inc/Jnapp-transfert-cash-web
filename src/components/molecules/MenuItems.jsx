@@ -1,32 +1,39 @@
-// components/MenuItem.jsx
+// MenuItem.jsx
 import Link from 'next/link';
-import { IconType } from 'react-icons'; // Type pour les icônes
+import { usePathname } from 'next/navigation';
 
-const MenuItem = ({
-  icon: Icon,
-  href,
-  label,
-  isActive = false,
-}) => {
-  return (
-    <div className="flex items-center space-x-2 py-2 hover:bg-gray-100 transition duration-300 rounded-lg">
-      <div className="flex items-center space-x-2 px-4">
-        <Icon 
-          className={`w-6 h-6 ${isActive ? 'text-yellow-500' : 'text-gray-500'}`}
-          aria-hidden="true"
-        />
-        <Link href={href} passHref>
-          <span
-            className={`text-lg ${
-              isActive ? 'text-yellow-500 font-bold' : 'text-gray-700'
-            }`}
-          >
-            {label}
-          </span>
-        </Link>
-      </div>
-    </div>
-  );
+export default function MenuItem({
+	icon: Icon,
+	href,
+	label,
+	rightIcon: RightIcon,
+	onClick, // Add click handler
+	className = ""
+}) {
+	const pathname = usePathname();
+	const isActive = pathname === href;
+
+	return (
+		<div
+			className={`flex items-center space-x-2 py-2 hover:bg-gray-100 transition duration-300 rounded-lg ${className}`}
+			onClick={onClick} // Handle click events
+		>
+			<div className="flex items-center space-x-2 px-4 w-full">
+				<Icon
+					className={`w-6 h-6 ${isActive ? 'text-[rgba(245,158,11)]' : 'text-gray-500'}`}
+					aria-hidden="true"
+				/>
+				<Link href={href} passHref>
+					<span
+						className={`text-lg flex-1 ${isActive ? 'text-[rgba(245,158,11)] font-bold' : 'text-gray-700'}`}
+					>
+						{label}
+					</span>
+				</Link>
+				{RightIcon && (
+					<RightIcon className="w-4 h-4 text-gray-500" />
+				)}
+			</div>
+		</div>
+	);
 };
-
-export default MenuItem;

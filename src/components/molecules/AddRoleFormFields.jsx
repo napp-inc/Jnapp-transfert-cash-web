@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
-import { addPermissionRoute } from '../../endPointsAndKeys'; // Create this endpoint
+import { addRoleRoute } from '../../endPointsAndKeys'; // Create this endpoint
 
-export default function AddPermissionFormFields() {
+export default function AddRoleFormFields() {
     const [formData, setFormData] = useState({
         code: '',
         designation: ''
@@ -25,14 +25,14 @@ export default function AddPermissionFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
-            const response = await fetch(addPermissionRoute, {
+            const response = await fetch(addRoleRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
             if (response.ok) {
-                alert('Permission créée avec succès');
+                alert('Rôle créé avec succès');
                 setFormData({
                     code: '',
                     designation: ''
@@ -40,17 +40,17 @@ export default function AddPermissionFormFields() {
             }
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Erreur lors de la création de la permission');
+            alert('Erreur lors de la création du rôle');
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <div className="mx-auto sm:p-6 py-8 bg-white shadow-lg rounded-lg w-full max-w-md">
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center justify-between mb-12">
                     <Heading
                         level="h2"
-                        children="Créer une permission"
+                        children="Créer un rôle"
                         className="px-4 mt-4 text-xl font-bold text-center text-orange-600"
                     />
 
@@ -59,11 +59,11 @@ export default function AddPermissionFormFields() {
                     </div>
                 </div>
 
-                {/* Section Informations de la permission */}
+                {/* Section Informations du rôle */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
-                        children="Détails de la permission"
+                        children="Informations du rôle"
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
 
@@ -74,8 +74,7 @@ export default function AddPermissionFormFields() {
                                 name="code"
                                 value={formData.code}
                                 onChange={handleChange}
-                                placeholder="Code de permission (ex: CR-ORG)"
-                                required
+                                placeholder="Code du rôle"
                             />
                         </div>
 
@@ -85,8 +84,7 @@ export default function AddPermissionFormFields() {
                                 name="designation"
                                 value={formData.designation}
                                 onChange={handleChange}
-                                placeholder="Description (ex: Créer une organisation)"
-                                required
+                                placeholder="Désignation du rôle"
                             />
                         </div>
                     </div>
