@@ -5,18 +5,18 @@ import {
     Marker,
     DirectionsRenderer,
     InfoWindow,
-    useJsApiLoader,
 } from "@react-google-maps/api";
 import { apiKeyGoogleMaps } from "../endPointsAndKeys";
 import useAgencies from "../hooks/useAgencies";
 import useMobileUnits from "../hooks/useMobileUnits";
 
-export default function MapComponent() {
+const defaultCenter = { lat: -4.389892, lng: 15.313868 };
+
+const MapComponent = () => {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: apiKeyGoogleMaps,
         libraries: ["places"],
         authReferrerPolicy: "origin",
-        loadingTimeout: 15000,
     });
 
     const [selectedUnit, setSelectedUnit] = useState(null);
@@ -29,38 +29,38 @@ export default function MapComponent() {
     const agencies = useAgencies();
     const { mobileUnits, alerts, directions, etas, updateMobileUnits } =
         useMobileUnits(isLoaded);
-    const defaultCenter = { lat: -4.389892, lng: 15.313868 };
 
-    // Position validation helper
-    const safePosition = (position) => {
-        if (!position) return defaultCenter;
-        const lat = Number(position.lat);
-        const lng = Number(position.lng);
-        return (!isNaN(lat) && !isNaN(lng) &&
+    // Enhanced position validation
+    const safePosition = (obj) => {
+        if (!obj) return defaultCenter;
+
+        const lat = Number(obj.lat ?? obj.position?.lat);
+        const lng = Number(obj.lng ?? obj.position?.lng);
+
+        const isValid = (
+            !isNaN(lat) &&
+            !isNaN(lng) &&
             lat >= -90 && lat <= 90 &&
-            lng >= -180 && lng <= 180)
-            ? { lat, lng }
-            : defaultCenter;
+            lng >= -180 && lng <= 180
+        );
+
+        return isValid ? { lat, lng } : defaultCenter;
     };
 
-    // Debug logging for invalid positions
+    // Data validation effect
     useEffect(() => {
         const validateData = () => {
             agencies.forEach((agency) => {
-                const lat = Number(agency.lat);
-                const lng = Number(agency.lng);
-                if (isNaN(lat) || isNaN(lng)) {
-                    console.error("Invalid agency position:", agency);
+                const pos = safePosition(agency);
+                if (pos === defaultCenter) {
+                    console.warn("Invalid agency position:", agency);
                 }
             });
 
             mobileUnits.forEach((unit) => {
-                if (unit.position) {
-                    const lat = Number(unit.position.lat);
-                    const lng = Number(unit.position.lng);
-                    if (isNaN(lat) || isNaN(lng)) {
-                        console.error("Invalid mobile unit position:", unit);
-                    }
+                const pos = safePosition(unit);
+                if (pos === defaultCenter) {
+                    console.warn("Invalid mobile unit position:", unit);
                 }
             });
         };
@@ -68,29 +68,28 @@ export default function MapComponent() {
         validateData();
     }, [agencies, mobileUnits]);
 
-    // Real-time updates
-    useEffect(() => {
-        if (isLoaded) {
-            const interval = setInterval(updateMobileUnits, 15000);
-            return () => clearInterval(interval);
-        }
-    }, [isLoaded, updateMobileUnits]);
-
     // Map bounds adjustment
     const fitBounds = useCallback(() => {
-        if (mapInstance) {
-            const bounds = new window.google.maps.LatLngBounds();
-            agencies
-                .filter((a) => typeof a.lat === "number" && typeof a.lng === "number")
-                .forEach((a) => bounds.extend(safePosition(a)));
+        if (!mapInstance) return;
 
-            mobileUnits
-                .filter((u) => u.position)
-                .forEach((u) => bounds.extend(safePosition(u.position)));
+        const bounds = new google.maps.LatLngBounds();
+        const validAgencies = agencies.filter((a) =>
+            typeof a.lat === "number" && typeof a.lng === "number"
+        );
 
-            if (!bounds.isEmpty()) {
-                mapInstance.fitBounds(bounds);
-            }
+        const validUnits = mobileUnits.filter((u) =>
+            u.position &&
+            typeof u.position.lat === "number" &&
+            typeof u.position.lng === "number"
+        );
+
+        [...validAgencies, ...validUnits].forEach((item) => {
+            const position = safePosition(item);
+            bounds.extend(new google.maps.LatLng(position));
+        });
+
+        if (!bounds.isEmpty()) {
+            mapInstance.fitBounds(bounds);
         }
     }, [mapInstance, agencies, mobileUnits]);
 
@@ -100,9 +99,8 @@ export default function MapComponent() {
 
     const handleMarkerClick = (unit) => {
         setSelectedUnit(unit);
-        if (mapInstance && unit.position) {
-            mapInstance.panTo(safePosition(unit.position));
-        }
+        const position = safePosition(unit);
+        mapInstance?.panTo(position);
     };
 
     if (loadError) {
@@ -135,17 +133,19 @@ export default function MapComponent() {
             <div className="mb-4">
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                    onClick={() =>
-                        setFilters({ ...filters, showAgencies: !filters.showAgencies })
-                    }
+                    onClick={() => setFilters((prev) => ({
+                        ...prev,
+                        showAgencies: !prev.showAgencies,
+                    }))}
                 >
                     {filters.showAgencies ? "Masquer" : "Afficher"} Agences
                 </button>
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={() =>
-                        setFilters({ ...filters, showStops: !filters.showStops })
-                    }
+                    onClick={() => setFilters((prev) => ({
+                        ...prev,
+                        showStops: !prev.showStops,
+                    }))}
                 >
                     {filters.showStops ? "Masquer" : "Afficher"} Arrêts
                 </button>
@@ -164,18 +164,14 @@ export default function MapComponent() {
                 {/* Agencies Markers */}
                 {filters.showAgencies &&
                     agencies
-                        .filter(
-                            (agency) =>
-                                typeof agency.lat === "number" &&
-                                typeof agency.lng === "number"
-                        )
+                        .filter((a) => typeof a.lat === "number" && typeof a.lng === "number")
                         .map((agency) => (
                             <Marker
                                 key={agency.id}
                                 position={safePosition(agency)}
                                 icon={{
                                     url: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png",
-                                    scaledSize: new window.google.maps.Size(40, 40),
+                                    scaledSize: new google.maps.Size(40, 40),
                                 }}
                                 onClick={() => handleMarkerClick(agency)}
                             />
@@ -193,7 +189,7 @@ export default function MapComponent() {
                     .map((unit) => (
                         <React.Fragment key={unit.id}>
                             {/* Directions Renderer */}
-                            {directions[unit.id] && (
+                            {directions[unit.id]?.routes && (
                                 <DirectionsRenderer
                                     directions={directions[unit.id]}
                                     options={{
@@ -209,12 +205,12 @@ export default function MapComponent() {
 
                             {/* Unit Marker */}
                             <Marker
-                                position={safePosition(unit.position)}
+                                position={safePosition(unit)}
                                 icon={{
                                     url: alerts[unit.id]
                                         ? "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-red.png"
                                         : "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-yellow.png",
-                                    scaledSize: new window.google.maps.Size(35, 35),
+                                    scaledSize: new google.maps.Size(35, 35),
                                 }}
                                 label={{
                                     text: `${Math.round(etas[unit.id] / 60)} min`,
@@ -226,9 +222,9 @@ export default function MapComponent() {
                     ))}
 
                 {/* InfoWindow */}
-                {selectedUnit && selectedUnit.position && (
+                {selectedUnit && (
                     <InfoWindow
-                        position={safePosition(selectedUnit.position)}
+                        position={safePosition(selectedUnit)}
                         onCloseClick={() => setSelectedUnit(null)}
                     >
                         <div className="max-w-xs">
@@ -247,4 +243,6 @@ export default function MapComponent() {
             </GoogleMap>
         </div>
     );
-}
+};
+
+export default MapComponent;
