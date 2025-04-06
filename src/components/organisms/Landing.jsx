@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { BsLinkedin, BsTwitter } from 'react-icons/bs';
 import Heading from '../atoms/Heading';
 import Logo from '../atoms/Logo';
-import Link from 'next/link';
 import Button from '../atoms/Button';
 
 export default function LandingPage() {
