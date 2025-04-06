@@ -2,7 +2,7 @@ import Heading from "../atoms/Heading";
 import Image from 'next/image';
 import TypesOfAlerts  from "../atoms/AlertTypes";
 
-const AlertItem = ({ type, title, subtitle, timestamp }) => {
+const AlertItem = ({ type, title, timestamp }) => {
     const config = TypesOfAlerts[type] || TypesOfAlerts.warning;
 
     return (
@@ -12,7 +12,6 @@ const AlertItem = ({ type, title, subtitle, timestamp }) => {
             </div>
             <div className="flex-grow">
                 <Heading level="h3" children={title} className={`text-lg font-bold ${config.color}`} />
-                <p className="text-gray-700">{subtitle}</p>
             </div>
             <p className={`text-right text-sm ${config.color}`}>{timestamp}</p>
         </div>

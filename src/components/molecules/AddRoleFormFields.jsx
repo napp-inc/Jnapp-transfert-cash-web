@@ -51,7 +51,7 @@ export default function AddRoleFormFields() {
                     <Heading
                         level="h2"
                         children="Créer un rôle"
-                        className="px-4 mt-4 text-xl font-bold text-center text-orange-600"
+                        className="px-4 mt-4 text-xl font-bold text-center text-black"
                     />
 
                     <div className="w-1/4">

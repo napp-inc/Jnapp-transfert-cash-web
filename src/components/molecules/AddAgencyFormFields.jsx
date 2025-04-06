@@ -11,10 +11,9 @@ export default function AddAgenceFormFields() {
         code: '',
         designation: '',
         addresse: '',
-        organisation: {
-            reference: '',
-            code: '',
-            designation: ''
+        localisation: {
+            latitude: 0,
+            longitude: 0
         }
     });
 
@@ -25,11 +24,11 @@ export default function AddAgenceFormFields() {
         }));
     };
 
-    const handleOrganisationChange = (e) => {
+    const handleLocalisationChange = (e) => {
         setFormData(prev => ({
             ...prev,
-            organisation: {
-                ...prev.organisation,
+            localisation: {
+                ...prev.localisation,
                 [e.target.name]: e.target.value
             }
         }));
@@ -40,9 +39,18 @@ export default function AddAgenceFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
+            const idToken = localStorage.getItem("idToken");
+
+            if (!idToken) {
+                alert("Vous n'êtes pas connecté !");
+            }
+
             const response = await fetch(addAgencyRoute, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${idToken}`
+                },
                 body: JSON.stringify(formData)
             });
 
@@ -52,10 +60,9 @@ export default function AddAgenceFormFields() {
                     code: '',
                     designation: '',
                     addresse: '',
-                    organisation: {
-                        reference: '',
-                        code: '',
-                        designation: ''
+                    localisation: {
+                        latitude: 0,
+                        longitude: 0
                     }
                 });
             }
@@ -115,6 +122,37 @@ export default function AddAgenceFormFields() {
                                 value={formData.addresse}
                                 onChange={handleChange}
                                 placeholder="Adresse"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Long et Lat */}
+                <div className="bg-gray-100 p-6 rounded-lg mb-8">
+                    <Heading
+                        level="h3"
+                        children="Géolocalisation de l'agence"
+                        className="px-4 mb-6 text-lg font-bold text-orange-600"
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="latitude"
+                                value={formData.latitude}
+                                onChange={handleLocalisationChange}
+                                placeholder="Latitude"
+                            />
+                        </div>
+
+                        <div className="col-span-2 md:col-span-1">
+                            <Input
+                                type="text"
+                                name="longitude"
+                                value={formData.longitude}
+                                onChange={handleLocalisationChange}
+                                placeholder="Longitude"
                             />
                         </div>
                     </div>

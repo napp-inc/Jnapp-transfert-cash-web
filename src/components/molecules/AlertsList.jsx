@@ -25,7 +25,7 @@ export default function AlertsList() {
                         </div>
                         :
                         (
-                            alerts.map((alert, index) => <AlertItem key={index} type={alert.type} title={alert.title} subtitle={alert.subtitle} timestamp={alert.timestamp} />)
+                            alerts.map((alert, index) => <AlertItem key={index} type={alert.type} title={alert.title} timestamp={alert.timestamp} />)
                         )}
             </div>
         </div>

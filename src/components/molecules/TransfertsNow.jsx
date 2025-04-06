@@ -1,77 +1,72 @@
 'use client';
-import { useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import Transferts from '../../hooks/Transferts';
 import customStyles from '../atoms/CustomStylesTables';
 import columns from '../atoms/TablesColums';
 import Heading from '../atoms/Heading';
 
-export default function TransfertsEnCours({ apiUrl = "api/url" }) {
-    const { data, loading, error } = Transferts(apiUrl);
+export default function TransfertsDashboard() {
+    const { data, loading, error } = Transferts();
 
-    const filteredData = useMemo(() => {
-        if (!data) return [];
-        return data.filter(item => item.etat === "EN COURS");
-    }, [data]);
+    // Define the columns you want to display
+    const tableColumns = columns([
+        'Transfert',
+        'Date',
+        'Chargé',
+        'Validateur',
+        'Véhicule',
+        'Sac',
+        'Trajet',
+        'Alertes',
+        'Montant',
+        'Status'
+    ]);
+
+    // Filter data to include only "EN COURS" status
+    const filteredData = data.filter(item => item.status === "EN COURS");
+
+    // Format alertes data for display
+    const formattedData = filteredData.map(item => ({
+        ...item,
+        Alertes: item.alertes.length > 0
+            ? item.alertes.join(', ')
+            : 'Aucune alerte'
+    }));
 
     return (
         <div className="bg-gray-100 p-4 w-full">
-            <Heading level="h2" className="text-2xl font-bold mb-4">
-                Transferts en Cours
-            </Heading>
+            <Heading
+                level="h2"
+                children="Transferts"
+                className="text-black-xl font-bold mb-4 title-size"
+            />
 
-            <div className="transferts-table overflow-auto">
+            <div className="transferts-table overflow-auto hide-scrollbar">
                 {error ? (
-                    <DataTable
-                    columns={columns([
-                        'Transfert',
-                        'Date',
-                        'Chargé',
-                        'Validateur',
-                        'Véhicule',
-                        'Sac',
-                        'Trajet',
-                        'Alertes',
-                        'Montant',
-                        'Status'
-                    ])}
-                    data={filteredData}
-                    progressPending={loading}
-                    progressComponent={<div className="p-4">Chargement...</div>}
-                    noDataComponent={<div className="p-4">Aucun transfert en cours</div>}
-                    customStyles={customStyles}
-                    highlightOnHover
-                    pointerOnHover
-                    pagination // Activation de la pagination
-                    paginationPerPage={20} // 20 éléments par page
-                    paginationRowsPerPageOptions={[20, 50, 100]} // Options de pagination
-                    responsive
-                />
+                    <div className="px-4 py-8 text-center text-red-500">
+                        ⚠️ Erreur: {error}
+                    </div>
                 ) : (
                     <DataTable
-                        columns={columns([
-                            'Transfert',
-                            'Date',
-                            'Chargé',
-                            'Validateur',
-                            'Véhicule',
-                            'Sac',
-                            'Trajet',
-                            'Alertes',
-                            'Montant',
-                            'Status'
-                        ])}
-                        data={filteredData}
+                        columns={tableColumns}
+                        data={formattedData} // Use the filtered and formatted data
                         progressPending={loading}
-                        progressComponent={<div className="p-4">Chargement...</div>}
-                        noDataComponent={<div className="p-4">Aucun transfert en cours</div>}
+                        progressComponent={
+                            <div className="px-4 py-8 text-center">
+                                Chargement en cours...
+                            </div>
+                        }
+                        noDataComponent={
+                            <div className="px-4 py-8 text-center">
+                                {loading ? '' : 'Aucun transfert trouvé'}
+                            </div>
+                        }
                         customStyles={customStyles}
                         highlightOnHover
                         pointerOnHover
-                        pagination // Activation de la pagination
-                        paginationPerPage={20} // 20 éléments par page
-                        paginationRowsPerPageOptions={[20, 50, 100]} // Options de pagination
-                        responsive
+                        pagination
+                        paginationPerPage={5}
+                        paginationRowsPerPageOptions={[5, 10, 15, 20, 25, 30]}
                     />
                 )}
             </div>
