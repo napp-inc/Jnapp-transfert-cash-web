@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { getAllVehiclesRoute } from "../endPointsAndKeys";
+import { getAllAgentsRoute } from "../endPointsAndKeys";
 
-const Vehicles = () => {
+const Agents = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -9,20 +9,22 @@ const Vehicles = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(getAllVehiclesRoute);
+                const response = await fetch(getAllAgentsRoute);
 
                 if (!response.ok) {
-                    throw new Error("Problème de connexion au serveur");
+                    throw new Error('Problème de connexion au serveur');
                 }
 
                 const result = await response.json();
+
                 if (Array.isArray(result)) {
                     setData(result);
                 }
-                else if (typeof result === "object" && result !== null) {
+                else if (typeof result === 'object' && result !== null) {
                     setData([result]);
-                } else {
-                    throw new Error("Format de données non reconnu");
+                }
+                else {
+                    throw new Error('Format de données non reconnu');
                 }
             } catch (err) {
                 setError(err.message);
@@ -32,9 +34,9 @@ const Vehicles = () => {
         };
 
         fetchData();
-    }, [])
+    }, []); // Empty dependency array ensures this runs only once
 
     return { data, loading, error };
 };
 
-export default Vehicles;
+export default Agents;

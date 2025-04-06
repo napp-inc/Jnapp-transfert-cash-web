@@ -39,17 +39,25 @@ export default function AddAgenceFormFields() {
         console.log('Données à envoyer:', formData);
 
         try {
-            const idToken = localStorage.getItem("idToken");
+            const token = localStorage.getItem("idToken");
+            console.log(token)
 
-            if (!idToken) {
+            if (!token) {
                 alert("Vous n'êtes pas connecté !");
             }
+            const requestData = {
+                ...formData,
+                localisation: {
+                    latitude: parseFloat(formData.localisation.latitude),
+                    longitude: parseFloat(formData.localisation.longitude)
+                }
+            };
 
             const response = await fetch(addAgencyRoute, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${idToken}`
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             });
@@ -138,7 +146,8 @@ export default function AddAgenceFormFields() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="col-span-1">
                             <Input
-                                type="text"
+                                type="number"
+                                step="any"
                                 name="latitude"
                                 value={formData.latitude}
                                 onChange={handleLocalisationChange}
@@ -148,7 +157,8 @@ export default function AddAgenceFormFields() {
 
                         <div className="col-span-2 md:col-span-1">
                             <Input
-                                type="text"
+                                type="number"
+                                step="any"
                                 name="longitude"
                                 value={formData.longitude}
                                 onChange={handleLocalisationChange}

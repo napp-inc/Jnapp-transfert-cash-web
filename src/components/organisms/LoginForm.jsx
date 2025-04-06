@@ -26,6 +26,31 @@ export default function LoginForm() {
             alert('Connexion échouée');
             router.push('/');
         }
+
+
+
+
+
+        e.preventDefault();
+		try {
+			// Appel à notre backend au lieu de Firebase
+			const response = await fetch(`${backendLogin}`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password }),
+			});
+
+			if (!response.ok) throw new Error('Identifiants invalides');
+			console.log(response.json());
+			
+			const { token } = await response.json();
+			localStorage.setItem('authToken', token); // Stockage du token JWT
+			console.log(token);
+			router.push('/dashboard');
+		} catch (error) {
+			console.error('Erreur de connexion:', error);
+			alert('Connexion échouée : ' + error.message);
+		}
     };
 
     return (

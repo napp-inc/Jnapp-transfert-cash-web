@@ -1,9 +1,10 @@
 'use client';
 import React from "react";
-export default function Input({ type, value, name, onChange, placeholder,}) {
+export default function Input({ type,step,  value, name, onChange, placeholder,}) {
   return (
     <input
       type={type}
+      step={step}
       value={value}
       name={name}
       onChange={onChange}
