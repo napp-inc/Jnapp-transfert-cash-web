@@ -1,9 +1,9 @@
 'use client'; // Obligatoire ici
 
-import ContentDashboard from '../../components/organisms/ContentDashboard';
-import Menu from '../../components/organisms/MenuDashbord';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import { AuthProvider } from '../../contexts/AuthContext';
+import ContentDashboard from '../../../components/organisms/ContentDashboard';
+import Menu from '../../../components/organisms/MenuDashbord';
+import ProtectedRoute from '../../../components/ProtectedRoute';
+import { AuthProvider } from '../../../contexts/AuthContext';
 
 export default function Home() {
     return (

@@ -1,7 +1,7 @@
 'use client'; // Obligatoire ici
 
-import ContentDashboard from '../../components/organisms/ContentDashboard';
-import Menu from '../../components/organisms/MenuDashbord';
+import ContentDashboard from '../../../components/organisms/ContentDashboard';
+import Menu from '../../../components/organisms/MenuDashbord';
 //import ProtectedRoute from '../../components/ProtectedRoute';
 //import { AuthProvider } from '../../contexts/AuthContext';
 

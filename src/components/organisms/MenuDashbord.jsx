@@ -60,13 +60,130 @@ export default function Menu() {
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 {/* Use React Icons instead of SVG paths */}
                 <MenuItem icon={BsSpeedometer2} href="/dashboard" label="Tableau de bord" />
+
                 <MenuItem icon={BsCarFront} href="/vehicules/add-vehicle" label="Véhicules" />
+                {/* Sous menu des véhicules */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/vehicules/list-vehicle"
+                        label="Liste des véhicules"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/vehicules/add-vehicle"
+                        label="Ajouter un véhicule"
+                        className="ml-6"
+                    />
+                </div>
+
                 <MenuItem icon={BsPeople} href="/agents/create-agent" label="Agents" />
+                {/* Sous menu des Agents */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/agents/list-agents"
+                        label="Liste des agents"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/agents/create-agent"
+                        label="Ajouter un agent"
+                        className="ml-6"
+                    />
+                </div>
+
                 <MenuItem icon={BsBuildings} href="/agency/add-agency" label="Agences" />
-                <MenuItem icon={BsBuildings} href="/organisation/add-organisation" label="Organisation" />
+                {/* Sous menu des Agences */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/agency/list-agency"
+                        label="Liste des agences"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/agency/add-agency"
+                        label="Ajouter une agence"
+                        className="ml-6"
+                    />
+                </div>
+
+                <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" />
+
+
                 <MenuItem icon={BsArrowLeftRight} href="/transferts" label="Transferts" />
+                {/* Sous menu des paramètres */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/settings/add-roles"
+                        label="Ajouter un rôle"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/settings/add-permissions"
+                        label="Ajouter des permissions"
+                        className="ml-6"
+                    />
+                </div>
+
                 <MenuItem icon={BsBell} href="/alerts" label="Alertes" />
+                {/* Sous menu des paramètres */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/settings/add-roles"
+                        label="Ajouter un rôle"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/settings/add-permissions"
+                        label="Ajouter des permissions"
+                        className="ml-6"
+                    />
+                </div>
+
                 <MenuItem icon={BsClipboardData} href="/reports" label="Rapports" />
+                {/* Sous menu des paramètres */}
+                <div
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/settings/add-roles"
+                        label="Ajouter un rôle"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/settings/add-permissions"
+                        label="Ajouter des permissions"
+                        className="ml-6"
+                    />
+                </div>
+
             </MenuSection>
 
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />
@@ -91,7 +208,7 @@ export default function Menu() {
                     }}
                 />
 
-                {/* Submenu container */}
+                {/* Sous menu des paramètres */}
                 <div
                     className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
