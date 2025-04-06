@@ -2,7 +2,8 @@
 import { useState } from "react";
 import useMediaQuery from "../../hooks/UseMediaQuery";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../contexts/AuthContext";
+import { auth } from '../../firebase';
+import { signOut } from 'firebase/auth';
 import MenuItem from "../molecules/MenuItems";
 import MenuSection from "../molecules/MenuSection";
 import Button from "../atoms/Button";
@@ -25,8 +26,12 @@ import {
 
 export default function Menu() {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isVehicleOpen, setIsVehicleOpen] = useState(false);
+    const [isAgentsOpen, setIsAgentsOpen] = useState(false);
+    const [isTransfertOpen, setIsTransfertOpen] = useState(false);
+    const [isAgencyOpen, setIsAgencyOpen] = useState(false);
+
     const router = useRouter();
-    const { logout } = useAuth();
     const [isHidden, setIsHidden] = useState(false);
     const isMobile = useMediaQuery("(max-width: 767px)");
 
@@ -36,7 +41,7 @@ export default function Menu() {
 
     const handleLogout = async () => {
         try {
-            await logout();
+            await signOut(auth);
             router.push("/");
             console.log("Déconnexion réussie");
         } catch (error) {
@@ -58,13 +63,15 @@ export default function Menu() {
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />
 
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
-                {/* Use React Icons instead of SVG paths */}
                 <MenuItem icon={BsSpeedometer2} href="/dashboard" label="Tableau de bord" />
 
-                <MenuItem icon={BsCarFront} href="/vehicules/add-vehicle" label="Véhicules" />
+                <MenuItem icon={BsCarFront} href="/vehicules/list-vehicle" label="Véhicules" onClick={(e) => {
+                    e.preventDefault();
+                    setIsVehicleOpen(!isVehicleOpen);
+                }} />
                 {/* Sous menu des véhicules */}
                 <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                    className={`${isVehicleOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
@@ -81,10 +88,13 @@ export default function Menu() {
                     />
                 </div>
 
-                <MenuItem icon={BsPeople} href="/agents/create-agent" label="Agents" />
+                <MenuItem icon={BsPeople} href="" label="Agents" onClick={(e) => {
+                    e.preventDefault;
+                    setIsAgentsOpen(!isAgentsOpen)
+                }} />
                 {/* Sous menu des Agents */}
                 <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                    className={`${isAgentsOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
@@ -101,10 +111,13 @@ export default function Menu() {
                     />
                 </div>
 
-                <MenuItem icon={BsBuildings} href="/agency/add-agency" label="Agences" />
+                <MenuItem icon={BsBuildings} href="" label="Agences" onClick={(e) => {
+                    e.preventDefault;
+                    setIsAgencyOpen(!isAgencyOpen)
+                }} />
                 {/* Sous menu des Agences */}
                 <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                    className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
@@ -124,65 +137,31 @@ export default function Menu() {
                 <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" />
 
 
-                <MenuItem icon={BsArrowLeftRight} href="/transferts" label="Transferts" />
-                {/* Sous menu des paramètres */}
+                <MenuItem icon={BsArrowLeftRight} href="" label="Transferts" onClick={(e) => {
+                    e.preventDefault;
+                    setIsTransfertOpen(!isTransfertOpen);
+                }} />
+                {/* Sous menu des Transferts */}
                 <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
+                    className={`${isTransfertOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
-                        icon={BsPlusCircle}
-                        href="/settings/add-roles"
-                        label="Ajouter un rôle"
+                        icon={BsShieldPlus}
+                        href="/transferts/list-transfert"
+                        label="Liste des transferts"
                         className="ml-6"
                     />
                     <MenuItem
-                        icon={BsShieldPlus}
-                        href="/settings/add-permissions"
-                        label="Ajouter des permissions"
+                        icon={BsPlusCircle}
+                        href="/transferts/initiate"
+                        label="Initier un transfert"
                         className="ml-6"
                     />
                 </div>
 
-                <MenuItem icon={BsBell} href="/alerts" label="Alertes" />
-                {/* Sous menu des paramètres */}
-                <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
-                >
-                    <MenuItem
-                        icon={BsPlusCircle}
-                        href="/settings/add-roles"
-                        label="Ajouter un rôle"
-                        className="ml-6"
-                    />
-                    <MenuItem
-                        icon={BsShieldPlus}
-                        href="/settings/add-permissions"
-                        label="Ajouter des permissions"
-                        className="ml-6"
-                    />
-                </div>
 
-                <MenuItem icon={BsClipboardData} href="/reports" label="Rapports" />
-                {/* Sous menu des paramètres */}
-                <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
-                >
-                    <MenuItem
-                        icon={BsPlusCircle}
-                        href="/settings/add-roles"
-                        label="Ajouter un rôle"
-                        className="ml-6"
-                    />
-                    <MenuItem
-                        icon={BsShieldPlus}
-                        href="/settings/add-permissions"
-                        label="Ajouter des permissions"
-                        className="ml-6"
-                    />
-                </div>
+                {/* <MenuItem icon={BsClipboardData} href="/reports" label="Rapports" /> */}
 
             </MenuSection>
 
