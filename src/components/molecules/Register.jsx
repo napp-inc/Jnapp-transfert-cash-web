@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithCustomToken } from 'firebase/auth';
-import { auth } from '../../firebase'; // Assurez-vous d'avoir configuré Firebase
+import { auth } from '../../firebase';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
