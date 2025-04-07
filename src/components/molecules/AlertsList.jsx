@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Alerts } from '../../hooks/Alerts';
+import { Alerts } from '../../hooks/useAlerts';
 import AlertItem from '../molecules/AlertItem';
 import Heading from '../atoms/Heading';
 

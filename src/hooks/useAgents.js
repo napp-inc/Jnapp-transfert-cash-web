@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllAgentsRoute } from "../endPointsAndKeys";
 
-const Agents = () => {
+const useAgent = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

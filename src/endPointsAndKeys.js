@@ -31,4 +31,4 @@ export const addRoleRoute = "https://superadmin-tfcv6lmhba-uc.a.run.app/role ";
 export const addPermissionRoute = "https://superadmin-tfcv6lmhba-uc.a.run.app/permission ";
 
 
-export const allTransfertsRoute = "http://localhost:3000/transferts";
+export const allTransfertsRoute = "https://transferts-tfcv6lmhba-uc.a.run.app/listTransferts";

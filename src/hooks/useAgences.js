@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { getAllAgenciesRoute } from "../endPointsAndKeys";
 import { DateTime } from "luxon";
 
@@ -16,26 +17,21 @@ export default function useAgences() {
                     throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
 
-                const response = await fetch(getAllAgenciesRoute, {
-                    method: "GET",
+                // Utilisation d'axios pour effectuer la requête GET
+                const response = await axios.get(getAllAgenciesRoute, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Erreur serveur: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const agencesArray = result.agences || [];
+                const agencesArray = response.data.agences || [];
 
                 const formattedAgencies = agencesArray.map(agence => ({
                     code: agence.code || "",
                     designation: agence.designation || "",
                     adresse: agence.adresse || "",
-                    "date d'ajout": agence.dateCreation 
+                    "date d'ajout": agence.dateCreation
                         ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
                         : "N/A",
                     "date de modification": agence.dateDerniereModification

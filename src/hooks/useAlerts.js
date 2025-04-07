@@ -11,7 +11,7 @@ const fetcher = async (...args) => {
 	}
 };
 
-export const Alerts = () => {
+export const useAlert = () => {
 	//const { data, error, isLoading } = await axios.get(backendAgencies);
 
 	return {

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import useMediaQuery from "../../hooks/useMediaQuery";
+import useMediaQuery from "../../hooks/useMediasQuery";
 import { useRouter } from "next/navigation";
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';

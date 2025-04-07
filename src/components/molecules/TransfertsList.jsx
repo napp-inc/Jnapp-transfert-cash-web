@@ -1,12 +1,12 @@
 'use client';
 import DataTable from 'react-data-table-component';
-import Transferts from '../../hooks/Transferts';
+import useTransfert  from '../../hooks/useTransferts';
 import customStyles from '../atoms/CustomStylesTables';
 import columns from '../atoms/TablesColums';
 import Heading from '../atoms/Heading';
 
 export default function TransfertsList() {
-    const { data, loading, error } = Transferts();
+    const { data, loading, error } = useTransfert();
 
     // Define the columns you want to display
     const tableColumns = columns([

@@ -4,7 +4,7 @@
 import Preview from '../molecules/PreviewDashboard';
 import TransfertsDashboard from '../molecules/TransfertsNow';
 import AlertsList from '../molecules/AlertsList';
-import MapComponent from '../molecules/MapComponent';
+import MapComponent from '../molecules/RealTimeMap';
 
 //const MapComponent = dynamic(() => import('../molecules/RealTimeMap'), {
 //   ssr: false,

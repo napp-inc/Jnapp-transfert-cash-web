@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { allTransfertsRoute } from "../endPointsAndKeys"
 
-const Transferts = () => {
+export default function useTransfert ()  {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -16,6 +16,7 @@ const Transferts = () => {
 				}
 
 				const result = await response.json();
+				console.log(result);
 
 				// If the API returns an array of transfer objects
 				if (Array.isArray(result)) {
@@ -40,5 +41,3 @@ const Transferts = () => {
 
 	return { data, loading, error };
 };
-
-export default Transferts;
