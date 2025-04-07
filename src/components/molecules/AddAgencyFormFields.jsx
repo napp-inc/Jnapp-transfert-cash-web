@@ -10,7 +10,7 @@ export default function AddAgenceFormFields() {
     const [formData, setFormData] = useState({
         code: '',
         designation: '',
-        addresse: '',
+        adresse: '',
         localisation: {
             latitude: 0,
             longitude: 0
@@ -67,7 +67,7 @@ export default function AddAgenceFormFields() {
                 setFormData({
                     code: '',
                     designation: '',
-                    addresse: '',
+                    adresse: '',
                     localisation: {
                         latitude: 0,
                         longitude: 0
@@ -126,8 +126,8 @@ export default function AddAgenceFormFields() {
                         <div className="col-span-full md:col-span-1">
                             <Input
                                 type="text"
-                                name="addresse"
-                                value={formData.addresse}
+                                name="adresse"
+                                value={formData.adresse}
                                 onChange={handleChange}
                                 placeholder="Adresse"
                             />

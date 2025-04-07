@@ -1,43 +1,32 @@
 'use client';
 import DataTable from 'react-data-table-component';
-import Transferts from '../../hooks/Transferts';
+import useAgences from '../../hooks/useAgences';
 import customStyles from '../atoms/CustomStylesTables';
 import columns from '../atoms/TablesColums';
 import Heading from '../atoms/Heading';
 
-export default function TransfertsList() {
-    const { data, loading, error } = Transferts();
+export default function AgencesList() {
+    const { data, loading, error } = useAgences();
 
     // Define the columns you want to display
     const tableColumns = columns([
-        'Transfert',
-        'Date',
-        'Chargé',
-        'Validateur',
-        'Véhicule',
-        'Sac',
-        'Trajet',
-        'Alertes',
-        'Montant',
-        'Status'
+        'Code',
+        'Designation',
+        'Adresse',
+        'Ajouté par',
+        'Date d\'ajout',
+        'Date de Modification'
     ]);
-
-    const formattedData = data.map(item => ({
-        ...item,
-        Alertes: item.alertes.length > 0
-            ? item.alertes.join(', ')
-            : 'Aucune alerte'
-    }));
 
     return (
         <div className="bg-gray-100 p-4 w-full">
             <Heading
                 level="h2"
-                children="Transferts"
+                children="Agences"
                 className="text-black-xl font-bold mb-4 title-size"
             />
 
-            <div className="transferts-table overflow-auto hide-scrollbar">
+            <div className="agences-table overflow-auto hide-scrollbar">
                 {error ? (
                     <div className="px-4 py-8 text-center text-red-500">
                         ⚠️ Erreur: {error}
@@ -45,7 +34,7 @@ export default function TransfertsList() {
                 ) : (
                     <DataTable
                         columns={tableColumns}
-                        data={formattedData} // Use the filtered and formatted data
+                        data={data} 
                         progressPending={loading}
                         progressComponent={
                             <div className="px-4 py-8 text-center">
@@ -54,7 +43,7 @@ export default function TransfertsList() {
                         }
                         noDataComponent={
                             <div className="px-4 py-8 text-center">
-                                {loading ? '' : 'Aucun transfert trouvé'}
+                                {loading ? '' : 'Aucune agence trouvée'}
                             </div>
                         }
                         customStyles={customStyles}

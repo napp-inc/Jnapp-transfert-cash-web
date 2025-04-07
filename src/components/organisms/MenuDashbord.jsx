@@ -134,7 +134,7 @@ export default function Menu() {
                     />
                 </div>
 
-                <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" />
+                {/* <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" /> */}
 
 
                 <MenuItem icon={BsArrowLeftRight} href="" label="Transferts" onClick={(e) => {

@@ -1,5 +1,4 @@
 'use client';
-
 import Input from '../atoms/Input';
 import CustomLink from '../atoms/Link';
 import Button from '../atoms/Button';

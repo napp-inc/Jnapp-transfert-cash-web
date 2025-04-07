@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/authContext';
 
 export default function ProtectedRoute({ children }) {
     const { isAuthenticated, loading } = useAuth();
@@ -9,6 +9,7 @@ export default function ProtectedRoute({ children }) {
 
     useEffect(() => {
         if (!loading && !isAuthenticated) {
+            const [nom, setNom] = useState('');
             console.log('Accès non autorisé - Redirection vers la connection');
             router.push('/');
         }

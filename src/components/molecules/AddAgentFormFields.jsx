@@ -1,106 +1,91 @@
-"use client"
-import React from 'react';
-import { useState } from 'react';
-import Heading from '../atoms/Heading';
-import Input from '../atoms/Input';
-import Button from '../atoms/Button';
-import { useRouter } from 'next/navigation';
-import { addAgentRoute } from '../../endPointsAndKeys';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+"use client";
+import React from "react";
+import { useState } from "react";
+import Heading from "../atoms/Heading";
+import Input from "../atoms/Input";
+import Button from "../atoms/Button";
+import { addAgentRoute } from "../../endPointsAndKeys";
+
 
 export default function AddAgentFormFields() {
     const [formData, setFormData] = useState({
-        prenom: '',
-        nom: '',
-        postnom: '',
-        email: '',
-        telephone: '',
-        adresse: '',
-        password: '',
+        prenom: "",
+        nom: "",
+        postnom: "",
+        email: "",
+        telephone: "",
+        adresse: "",
+        password: "",
         agence: {
-            reference: '',
-            code: '',
-            designation: ''
+            code: "",
+            designation: "",
         },
-        organisation: {
-            reference: '',
-            code: '',
-            designation: ''
-        },
-        role: {
-            reference: '',
-            code: '',
-            designation: ''
-        }
     });
 
+    // Handle changes for top-level fields
     const handleChange = (e) => {
-        setFormData(prev => ({
+        const { name, value } = e.target;
+        setFormData((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value
+            [name]: value,
         }));
     };
 
+    // Handle changes for nested fields in `agence`
     const handleNestedChange = (section) => (e) => {
-        setFormData(prev => ({
+        const { name, value } = e.target;
+        setFormData((prev) => ({
             ...prev,
             [section]: {
                 ...prev[section],
-                [e.target.name]: e.target.value
-            }
+                [name]: value,
+            },
         }));
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Données à envoyer:', formData);
+        console.log("Données à envoyer:", formData);
 
         try {
-            const { email, password } = formData;
-            const auth = getAuth();
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const token = localStorage.getItem("idToken");
+            if (!token) {
+                alert("Vous n'êtes pas connecté !");
+                return;
+            };
 
             const response = await fetch(addAgentRoute, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    uid: userCredential.user.uid,
-                }),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
             });
 
             if (response.ok) {
-                alert('Agent créé avec succès');
-                await signInWithEmailAndPassword(auth, email, password);
+                alert("Agent créé avec succès !");
+                setFormData({
+                    prenom: "",
+                    nom: "",
+                    postnom: "",
+                    email: "",
+                    telephone: "",
+                    adresse: "",
+                    password: "",
+                    agence: {
+                        code: "",
+                        designation: "",
+                    },
+                });
+            } else {
+                const errorData = await response.json();
+                alert(`Erreur lors de la création: ${errorData.message || "Erreur inconnue"}`);
             }
-            else {
-                alert('Agent non créé');
-            }
-
-            setFormData({
-                prenom: '',
-                nom: '',
-                postnom: '',
-                email: '',
-                telephone: '',
-                adresse: '',
-                password: '',
-                agence: {
-                    reference: '',
-                    code: '',
-                    designation: ''
-                },
-                role: {
-                    reference: '',
-                    code: '',
-                    designation: ''
-                }
-            });
-
-        }
-        catch (error) {
-            console.error('Erreur:', error);
-            alert('Erreur lors de la création');
+        } catch (error) {
+            console.error("Erreur:", error);
+            alert("Une erreur s'est produite lors de la création.");
         }
     };
 
@@ -125,7 +110,6 @@ export default function AddAgentFormFields() {
                         children="Informations personnelles"
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
-
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="col-span-1">
                             <Input
@@ -137,7 +121,6 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-
                         <div className="col-span-1">
                             <Input
                                 type="text"
@@ -148,7 +131,6 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-
                         <div className="col-span-1">
                             <Input
                                 type="text"
@@ -158,7 +140,6 @@ export default function AddAgentFormFields() {
                                 placeholder="Postnom"
                             />
                         </div>
-
                         <div className="col-span-full md:col-span-1">
                             <Input
                                 type="email"
@@ -169,7 +150,6 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-
                         <div className="col-span-full md:col-span-1">
                             <Input
                                 type="tel"
@@ -180,7 +160,6 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-
                         <div className="col-span-full">
                             <Input
                                 type="text"
@@ -191,7 +170,6 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-
                         <div className="col-span-full md:col-span-1">
                             <Input
                                 type="password"
@@ -212,81 +190,24 @@ export default function AddAgentFormFields() {
                         children="Agence"
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
-
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="reference"
-                                value={formData.agence.reference}
-                                onChange={handleNestedChange('agence')}
-                                placeholder="Référence agence"
-                                required
-                            />
-                        </div>
-
                         <div className="col-span-1">
                             <Input
                                 type="text"
                                 name="code"
                                 value={formData.agence.code}
-                                onChange={handleNestedChange('agence')}
+                                onChange={handleNestedChange("agence")}
                                 placeholder="Code agence"
                                 required
                             />
                         </div>
-
                         <div className="col-span-2 md:col-span-1">
                             <Input
                                 type="text"
                                 name="designation"
                                 value={formData.agence.designation}
-                                onChange={handleNestedChange('agence')}
+                                onChange={handleNestedChange("agence")}
                                 placeholder="Désignation agence"
-                                required
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Rôle */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Rôle"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="reference"
-                                value={formData.role.reference}
-                                onChange={handleNestedChange('role')}
-                                placeholder="Référence rôle"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.role.code}
-                                onChange={handleNestedChange('role')}
-                                placeholder="Code rôle"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-2 md:col-span-1">
-                            <Input
-                                type="text"
-                                name="designation"
-                                value={formData.role.designation}
-                                onChange={handleNestedChange('role')}
-                                placeholder="Désignation rôle"
                                 required
                             />
                         </div>

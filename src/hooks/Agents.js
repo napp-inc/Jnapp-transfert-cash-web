@@ -9,23 +9,43 @@ const Agents = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(getAllAgentsRoute);
+                const token = localStorage.getItem("idToken");
 
-                if (!response.ok) {
-                    throw new Error('Problème de connexion au serveur');
+                if (!token) {
+                    throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
-
+                const response = await fetch(getAllAgentsRoute, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Problème de connexion au serveur");
+                }
                 const result = await response.json();
 
-                if (Array.isArray(result)) {
-                    setData(result);
-                }
-                else if (typeof result === 'object' && result !== null) {
-                    setData([result]);
-                }
-                else {
-                    throw new Error('Format de données non reconnu');
-                }
+                const agentsArray = Array.isArray(result)
+                    ? result
+                    : typeof result === "object" && result !== null
+                        ? [result]
+                        : [];
+                const formattedData = agentsArray.map((agent) => ({
+                    "prenom": agent.prenom || "",
+                    "nom": agent.nom || "",
+                    "postnom": agent.postnom || "",
+                    "email": agent.email || "",
+                    "telephone": agent.telephone || "",
+                    "adresse": agent.adresse || "",
+                    "agence de référence": agent.agence?.code || "",
+                    "role": agent.role?.code || "",
+                    "ajout par": agent.creator || "",
+                    "date d'ajout": agent.dateCreation || "",
+                    "date de modification": agent.dateDerniereModification || "",
+                }));
+
+                setData(formattedData);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -34,8 +54,8 @@ const Agents = () => {
         };
 
         fetchData();
-    }, []); // Empty dependency array ensures this runs only once
-
+    }, []);
+    console.log(data);
     return { data, loading, error };
 };
 

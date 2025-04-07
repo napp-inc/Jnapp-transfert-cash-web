@@ -27,7 +27,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
                     <Button
-                        text="S'inscrire"
+                        text="Inscrire votre organisation"
                         onClick={() => router.push('/register')}
                         className="bg-yellow-500 hover:bg-yellow-600 font-bold text-white px-10 py-4 rounded-full border border-orange-200 transition-all"
                     />

@@ -12,11 +12,13 @@ export const addOrganisationRoute = "https://organisations-tfcv6lmhba-uc.a.run.a
 
 export const addAgencyRoute = "https://agence-tfcv6lmhba-uc.a.run.app/create";
 
-export const addAgentRoute = "https://agent-tfcv6lmhba-uc.a.run.app/register";
+export const addAgentRoute = "https://agent-tfcv6lmhba-uc.a.run.app/create";
 
 export const getAllVehiclesRoute = "http://localhost:3000/vehicles";
 
-export const getAllAgentsRoute = "http://localhost:3000/agents";
+export const getAllAgentsRoute = "https://agent-tfcv6lmhba-uc.a.run.app/listAgents";
+
+export const getAllAgenciesRoute = "https://agence-tfcv6lmhba-uc.a.run.app/listAgences";
 
 export const initTransfertRoute = "http://TRUCS-A-REMPLIR";
 

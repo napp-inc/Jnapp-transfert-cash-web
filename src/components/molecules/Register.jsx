@@ -6,7 +6,7 @@ import { auth } from '../../firebase';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
-import {  registerRoute } from '../../endPointsAndKeys';
+import { registerRoute } from '../../endPointsAndKeys';
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -55,7 +55,7 @@ export default function RegisterForm() {
         setLoading(true);
 
         try {
-            const response = await fetch( registerRoute, {
+            const response = await fetch(registerRoute, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -68,6 +68,10 @@ export default function RegisterForm() {
 
             // Authentification Firebase avec le custom token
             await signInWithCustomToken(auth, data.admin.customToken);
+
+            const idToken = await auth.currentUser.getIdToken();
+            localStorage.setItem('idToken', idToken);
+
             alert('Organisation créée et connecté avec succès !');
             router.push('/dashboard');
 
