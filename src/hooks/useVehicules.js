@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllVehiclesRoute } from "../endPointsAndKeys";
 
-const Vehicles = () => {
+export default function useVehicle () {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -36,5 +36,3 @@ const Vehicles = () => {
 
     return { data, loading, error };
 };
-
-export default Vehicles;

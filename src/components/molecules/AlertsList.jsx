@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import { Alerts } from '../../hooks/useAlerts';
+import { useAlert } from '../../hooks/useAlerts';
 import AlertItem from '../molecules/AlertItem';
 import Heading from '../atoms/Heading';
 
 
 export default function AlertsList() {
-    const { alerts, isLoading, isError } = Alerts();
+    const { alerts, isLoading, isError } = useAlert();
 
     return (
         <div className="bg-gray-100 p-4 w-[100%] items-center">
