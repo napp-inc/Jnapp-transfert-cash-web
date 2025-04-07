@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllAgentsRoute } from "../endPointsAndKeys";
 
-const useAgent = () => {
+export default function useAgent() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -58,5 +58,3 @@ const useAgent = () => {
     console.log(data);
     return { data, loading, error };
 };
-
-export default Agents;
