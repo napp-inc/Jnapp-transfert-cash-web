@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import PreviewItems from '../atoms/PreviewItem';
 import Heading from '../atoms/Heading';
-import Transferts from '../../hooks/Transferts';
+import Transferts from '../../hooks/useTransferts';
 
 export default function Preview() {
     // Initialize state with default numeric values

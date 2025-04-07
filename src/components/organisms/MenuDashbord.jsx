@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import useMediaQuery from "../../hooks/UseMediaQuery";
+import useMediaQuery from "../../hooks/useMediaQuery";
 import { useRouter } from "next/navigation";
 import { auth } from '../../firebase';
 import { signOut } from 'firebase/auth';
@@ -42,6 +42,7 @@ export default function Menu() {
     const handleLogout = async () => {
         try {
             await signOut(auth);
+            localStorage.removeItem("idToken");
             router.push("/");
             console.log("Déconnexion réussie");
         } catch (error) {

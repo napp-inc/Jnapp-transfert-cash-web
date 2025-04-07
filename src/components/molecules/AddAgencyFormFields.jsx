@@ -1,82 +1,101 @@
-"use client"
-import React from 'react';
-import { useState } from 'react';
-import Heading from '../atoms/Heading';
-import Input from '../atoms/Input';
-import Button from '../atoms/Button';
-import { addAgencyRoute } from '../../endPointsAndKeys';
+"use client";
+import React, { useState } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import Heading from "../atoms/Heading";
+import Input from "../atoms/Input";
+import Button from "../atoms/Button";
+import Popup from "../atoms/Popup";
+import { addAgencyRoute } from "../../endPointsAndKeys";
+import { apiKeyGoogleMaps } from "../../endPointsAndKeys";
+
+const defaultCenter = { lat: -4.389892, lng: 15.313868 };
 
 export default function AddAgenceFormFields() {
     const [formData, setFormData] = useState({
-        code: '',
-        designation: '',
-        adresse: '',
+        code: "",
+        designation: "",
+        adresse: "",
         localisation: {
-            latitude: 0,
-            longitude: 0
-        }
+            latitude: defaultCenter.lat,
+            longitude: defaultCenter.lng,
+        },
     });
 
+    const [selectedPosition, setSelectedPosition] = useState(defaultCenter); // État pour la position sur la carte
+    const [popupMessage, setPopupMessage] = useState(null); // État pour le popup
+    const [loading, setLoading] = useState(false); // État pour gérer le chargement
+
     const handleChange = (e) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         }));
     };
 
-    const handleLocalisationChange = (e) => {
-        setFormData(prev => ({
+    const handleMapClick = (event) => {
+        const { latLng } = event;
+        const lat = latLng.lat();
+        const lng = latLng.lng();
+
+        setSelectedPosition({ lat, lng });
+        setFormData((prev) => ({
             ...prev,
             localisation: {
-                ...prev.localisation,
-                [e.target.name]: e.target.value
-            }
+                latitude: lat,
+                longitude: lng,
+            },
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Données à envoyer:', formData);
+        setLoading(true);
+        setPopupMessage(null);
 
         try {
             const token = localStorage.getItem("idToken");
-            console.log(token)
-
             if (!token) {
-                alert("Vous n'êtes pas connecté !");
+                setPopupMessage("Vous n'êtes pas connecté !");
+                return;
             }
+
             const requestData = {
                 ...formData,
                 localisation: {
                     latitude: parseFloat(formData.localisation.latitude),
-                    longitude: parseFloat(formData.localisation.longitude)
-                }
+                    longitude: parseFloat(formData.localisation.longitude),
+                },
             };
 
             const response = await fetch(addAgencyRoute, {
-                method: 'POST',
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(requestData),
             });
 
             if (response.ok) {
-                alert('Agence créée avec succès');
+                setPopupMessage("Agence créée avec succès !");
                 setFormData({
-                    code: '',
-                    designation: '',
-                    adresse: '',
+                    code: "",
+                    designation: "",
+                    adresse: "",
                     localisation: {
-                        latitude: 0,
-                        longitude: 0
-                    }
+                        latitude: defaultCenter.lat,
+                        longitude: defaultCenter.lng,
+                    },
                 });
+                setSelectedPosition(defaultCenter);
+            } else {
+                throw new Error("Erreur lors de la création de l'agence");
             }
         } catch (error) {
-            console.error('Erreur:', error);
-            alert('Erreur lors de la création');
+            console.error("Erreur:", error);
+            setPopupMessage(error.message || "Une erreur est survenue");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -90,7 +109,11 @@ export default function AddAgenceFormFields() {
                         className="px-4 mt-4 text-xl font-bold text-center text-orange-600"
                     />
                     <div className="w-1/4">
-                        <Button text="Enregistrer" type="submit" />
+                        <Button
+                            text={loading ? "Enregistrement..." : "Enregistrer"}
+                            type="submit"
+                            disabled={loading}
+                        />
                     </div>
                 </div>
 
@@ -135,7 +158,7 @@ export default function AddAgenceFormFields() {
                     </div>
                 </div>
 
-                {/* Long et Lat */}
+                {/* Carte Google Maps */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -143,32 +166,41 @@ export default function AddAgenceFormFields() {
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="number"
-                                step="any"
-                                name="latitude"
-                                value={formData.latitude}
-                                onChange={handleLocalisationChange}
-                                placeholder="Latitude"
-                            />
-                        </div>
+                    <LoadScript googleMapsApiKey={apiKeyGoogleMaps}>
+                        <GoogleMap
+                            mapContainerStyle={{ height: "400px", width: "100%", borderRadius: "10px" }}
+                            center={selectedPosition}
+                            zoom={15}
+                            onClick={handleMapClick}
+                        >
+                            {selectedPosition && (
+                                <Marker position={selectedPosition} />
+                            )}
+                        </GoogleMap>
+                    </LoadScript>
 
-                        <div className="col-span-2 md:col-span-1">
-                            <Input
-                                type="number"
-                                step="any"
-                                name="longitude"
-                                value={formData.longitude}
-                                onChange={handleLocalisationChange}
-                                placeholder="Longitude"
-                            />
-                        </div>
+                    <div className="mt-4">
+                        <p>
+                            Latitude:{" "}
+                            <span className="font-bold">
+                                {formData.localisation.latitude.toFixed(6)}
+                            </span>
+                        </p>
+                        <p>
+                            Longitude:{" "}
+                            <span className="font-bold">
+                                {formData.localisation.longitude.toFixed(6)}
+                            </span>
+                        </p>
                     </div>
                 </div>
-
             </form>
+
+            {/* Affichage du popup */}
+            <Popup
+                message={popupMessage}
+                onClose={() => setPopupMessage(null)}
+            />
         </div>
     );
 }

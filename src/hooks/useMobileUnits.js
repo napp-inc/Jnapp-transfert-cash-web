@@ -1,56 +1,55 @@
-import io from 'socket.io-client';
+import axios from 'axios'; // Import Axios pour les requêtes HTTP
 import { apiBackendRoute } from '../endPointsAndKeys';
 import { useState, useEffect } from 'react';
-
-const useMobileUnits = (isLoaded) => {
-    const [mobileUnits, setMobileUnits] = useState([]);
-    const [alerts, setAlerts] = useState({});
-    const [isConnected, setIsConnected] = useState(true);
-    const [directions, setDirections] = useState({});
-    const [etas, setEtas] = useState({});
+export default function useMobileUnits() {
+    const [mobileUnits, setMobileUnits] = useState([]); // Liste des véhicules
+    const [alerts, setAlerts] = useState({}); // Alertes pour les véhicules immobilisés
+    const [directions, setDirections] = useState({}); // Données de directions
+    const [etas, setEtas] = useState({}); // Temps d'arrivée estimé (ETA)
 
     useEffect(() => {
-        if (!isLoaded) return;
+        let intervalId;
 
-        const socket = io(`${apiBackendRoute}`);
-        socket.on('connect', () => {
-            setIsConnected(true);
-            socket.emit('get-mobile-units');
-        });
+        const fetchPositions = async () => {
+            try {
+                const response = await axios.get(apiBackendRoute);
+                const updatedPositions = response.data;
 
-        socket.on('mobile-data', (data) => {
-            // Mettre à jour les vehicules avec les nouvelles données
-            setMobileUnits(data);
-            // Mettre à jour les alertes
-            const newAlerts = {};
-            data.forEach((unit) => {
-                if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
-                    newAlerts[unit.id] = `ALERTE : ${unit.name} immobilisé`;
-                }
-            });
-            setAlerts(newAlerts);
-        });
+                // Mettre à jour les positions des véhicules
+                setMobileUnits((prevUnits) =>
+                    prevUnits.map((unit) => {
+                        const updatedUnit = updatedPositions.find((pos) => pos.id === unit.id);
+                        return updatedUnit ? { ...unit, ...updatedUnit } : unit;
+                    })
+                );
 
-        socket.on('disconnect', () => {
-            setIsConnected(false);
-            // Réinitialiser les vehicules en cas de déconnexion
-            setMobileUnits([]);
-        });
+                // Générer des alertes pour les véhicules immobilisés
+                const newAlerts = {};
+                updatedPositions.forEach((unit) => {
+                    if (unit.speed < 5 && Date.now() - unit.lastMove > 300000) {
+                        newAlerts[unit.id] = `ALERTE : ${unit.name} immobilisé`;
+                    }
+                });
+                setAlerts(newAlerts);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des positions:', error);
+            }
+        };
+
+        fetchPositions();
+        intervalId = setInterval(fetchPositions, 10000); // 10 secondes
 
         return () => {
-            socket.disconnect();
+            clearInterval(intervalId);
         };
-    }, [isLoaded]);
+    }, []);
 
+    // Calcul des itinéraires et des temps d'arrivée estimés (ETA)
     useEffect(() => {
-        if (!isLoaded || !isConnected) return;
+        if (!window.google?.maps?.DirectionsService) return;
 
         const fetchRoute = async (unit) => {
             try {
-                if (!window.google?.maps?.DirectionsService) {
-                    return;
-                }
-
                 const directionsService = new window.google.maps.DirectionsService();
                 const result = await directionsService.route({
                     origin: new window.google.maps.LatLng(unit.path[0].lat, unit.path[0].lng),
@@ -73,9 +72,7 @@ const useMobileUnits = (isLoaded) => {
         };
 
         mobileUnits.forEach((unit) => fetchRoute(unit));
-    }, [mobileUnits, isConnected, isLoaded]);
+    }, [mobileUnits]);
 
     return { mobileUnits, alerts, directions, etas };
 };
-
-export default useMobileUnits;

@@ -13,7 +13,6 @@ export default function AgencesList() {
         'Code',
         'Designation',
         'Adresse',
-        'Ajouté par',
         'Date d\'ajout',
         'Date de Modification'
     ]);
@@ -34,7 +33,7 @@ export default function AgencesList() {
                 ) : (
                     <DataTable
                         columns={tableColumns}
-                        data={data} 
+                        data={data}
                         progressPending={loading}
                         progressComponent={
                             <div className="px-4 py-8 text-center">

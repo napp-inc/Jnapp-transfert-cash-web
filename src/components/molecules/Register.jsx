@@ -1,3 +1,4 @@
+// pages/RegisterForm.js
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,6 +7,8 @@ import { auth } from '../../firebase';
 import Heading from '../atoms/Heading';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
+import Popup from '../atoms/Popup';
+import axios from 'axios';
 import { registerRoute } from '../../endPointsAndKeys';
 
 export default function RegisterForm() {
@@ -29,6 +32,7 @@ export default function RegisterForm() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [popupMessage, setPopupMessage] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -55,25 +59,24 @@ export default function RegisterForm() {
         setLoading(true);
 
         try {
-            const response = await fetch(registerRoute, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+            const response = await axios.post(registerRoute, formData, {
+                headers: { 'Content-Type': 'application/json' }
             });
 
-            if (!response.ok) throw new Error('Erreur serveur');
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error('Erreur serveur');
+            }
 
-            const data = await response.json();
+            const data = response.data;
             console.log('Réponse du backend:', data);
 
-            // Authentification Firebase avec le custom token
             await signInWithCustomToken(auth, data.admin.customToken);
 
             const idToken = await auth.currentUser.getIdToken();
             localStorage.setItem('idToken', idToken);
 
-            alert('Organisation créée et connecté avec succès !');
-            router.push('/dashboard');
+            // Afficher un message de succès avec le mot de passe temporaire
+            setPopupMessage(`Bienvenu chez J-napps! Votre mot de passe est ${data.admin.motDePasseTemporaire}. Veuillez le changer par la suite.`);
 
         } catch (error) {
             console.error('Erreur:', error);
@@ -84,7 +87,7 @@ export default function RegisterForm() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 mt-auto mb-auto bg-white shadow-lg rounded-lg">
+        <div className="max-w-4xl mx-auto p-6 mt-auto mb-auto bg-white shadow-lg rounded-lg relative">
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center justify-between mb-12">
                     <Heading level="h2" children="Créer une organisation" className="px-4 mt-4 text-xl font-bold text-center text-orange-600" />
@@ -94,7 +97,7 @@ export default function RegisterForm() {
                     </div>
                 </div>
 
-                {/* Section Informations générales */}
+                {/* Informations générales */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -103,24 +106,28 @@ export default function RegisterForm() {
                     />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <Input
+                            type="text"
                             name="code"
                             value={formData.code}
                             onChange={handleChange}
                             placeholder="Code"
                         />
                         <Input
+                            type="text"
                             name="designation"
                             value={formData.designation}
                             onChange={handleChange}
                             placeholder="Désignation de l'organisation"
                         />
                         <Input
+                            type="text"
                             name="sigle"
                             value={formData.sigle}
                             onChange={handleChange}
                             placeholder="Sigle officiel"
                         />
                         <Input
+                            type="text"
                             name="rccm"
                             value={formData.rccm}
                             onChange={handleChange}
@@ -129,7 +136,7 @@ export default function RegisterForm() {
                     </div>
                 </div>
 
-                {/* Section Coordonnées */}
+                {/* Coordonnées */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -138,12 +145,14 @@ export default function RegisterForm() {
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Input
+                            type="text"
                             name="adresse"
                             value={formData.adresse}
                             onChange={handleChange}
                             placeholder="Siège social"
                         />
                         <Input
+                            type="tel"
                             name="telephone"
                             value={formData.telephone}
                             onChange={handleChange}
@@ -156,6 +165,7 @@ export default function RegisterForm() {
                             placeholder="Addresse email officielle"
                         />
                         <Input
+                            type="text"
                             name="siteWeb"
                             value={formData.siteWeb}
                             onChange={handleChange}
@@ -164,7 +174,6 @@ export default function RegisterForm() {
                     </div>
                 </div>
 
-                {/* Section Responsable */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -172,33 +181,36 @@ export default function RegisterForm() {
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                         <Input
+                            type="text"
                             name="nom"
                             value={formData.responsable.nom}
                             onChange={handleResponsableChange}
                             placeholder="Nom"
                         />
                         <Input
+                            type="text"
                             name="postnom"
                             value={formData.responsable.postnom}
                             onChange={handleResponsableChange}
                             placeholder="Postnom"
                         />
                         <Input
+                            type="text"
                             name="prenom"
                             value={formData.responsable.prenom}
                             onChange={handleResponsableChange}
                             placeholder="Prénom"
                         />
                         <Input
+                            type="email"
                             name="email"
                             value={formData.responsable.email}
                             onChange={handleResponsableChange}
                             placeholder="Addresse email"
                         />
                         <Input
-                            label="Téléphone"
+                            type="tel"
                             name="telephone"
                             value={formData.responsable.telephone}
                             onChange={handleResponsableChange}
@@ -211,6 +223,14 @@ export default function RegisterForm() {
                     <p className="text-red-500 text-center mb-4">{error}</p>
                 )}
             </form>
+
+            <Popup
+                message={popupMessage}
+                onClose={() => {
+                    setPopupMessage(null);
+                    router.push('/dashboard');
+                }}
+            />
         </div>
     );
 }

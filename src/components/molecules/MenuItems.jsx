@@ -7,7 +7,7 @@ export default function MenuItem({
 	href,
 	label,
 	rightIcon: RightIcon,
-	onClick, // Add click handler
+	onClick,
 	className = ""
 }) {
 	const pathname = usePathname();

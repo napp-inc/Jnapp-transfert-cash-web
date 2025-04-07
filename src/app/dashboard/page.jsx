@@ -1,9 +1,9 @@
-'use client'; // Obligatoire ici
+'use client';
 
 import ContentDashboard from '../../components/organisms/ContentDashboard';
 import Menu from '../../components/organisms/MenuDashbord';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import { AuthProvider } from '../../contexts/AuthContext';
+import ProtectedRoute from '../../contexts/protectedRoute';
+import { AuthProvider } from '../../contexts/authContext';
 
 export default function Home() {
     return (

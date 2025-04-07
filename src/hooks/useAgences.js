@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getAllAgenciesRoute } from "../endPointsAndKeys";
+import { DateTime } from "luxon";
 
-export default function useAgences(){
+export default function useAgences() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,33 +25,27 @@ export default function useAgences(){
                 });
 
                 if (!response.ok) {
-                    throw new Error("Problème de connexion au serveur");
+                    throw new Error(`Erreur serveur: ${response.status}`);
                 }
 
                 const result = await response.json();
-                console.log(result);
-
                 const agencesArray = result.agences || [];
 
-                let datas = [];
+                const formattedAgencies = agencesArray.map(agence => ({
+                    code: agence.code || "",
+                    designation: agence.designation || "",
+                    adresse: agence.adresse || "",
+                    "date d'ajout": agence.dateCreation 
+                        ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A",
+                    "date de modification": agence.dateDerniereModification
+                        ? DateTime.fromMillis(Number(agence.dateDerniereModification)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A"
+                }));
 
-                if (agencesArray.length > 0) {
-                    agencesArray.forEach((element) => {
-                        datas.push({
-                            "code": element.code || "",
-                            "designation": element.designation || "",
-                            "adresse": element.adresse || "",
-                            "ajout par": element.creator || "",
-                            "date d'ajout": element.dateCreation || "",
-                            "date de modification": element.dateDerniereModification || "",
-                        });
-                    });
-                    
-                };
-                console.log(datas);
-                setData(datas);
+                setData(formattedAgencies);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Erreur lors du chargement des agences");
             } finally {
                 setLoading(false);
             }
@@ -60,4 +55,4 @@ export default function useAgences(){
     }, []);
 
     return { data, loading, error };
-};
+}

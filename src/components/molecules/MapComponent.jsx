@@ -1,22 +1,22 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
     GoogleMap,
     Marker,
     DirectionsRenderer,
     InfoWindow,
+    useJsApiLoader,
 } from "@react-google-maps/api";
-import { apiKeyGoogleMaps } from "../endPointsAndKeys";
-import useAgencies from "../hooks/useAgencies";
-import useMobileUnits from "../hooks/useMobileUnits";
+import { apiKeyGoogleMaps } from "../../endPointsAndKeys";
+import useAgencies from "../../hooks/useAgencies";
+import useMobileUnits from "../../hooks/useMobileUnits";
 
-const defaultCenter = { lat: -4.389892, lng: 15.313868 };
-
-const MapComponent = () => {
+export default function MapComponent() {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: apiKeyGoogleMaps,
         libraries: ["places"],
         authReferrerPolicy: "origin",
+        loadingTimeout: 15000,
     });
 
     const [selectedUnit, setSelectedUnit] = useState(null);
@@ -29,78 +29,41 @@ const MapComponent = () => {
     const agencies = useAgencies();
     const { mobileUnits, alerts, directions, etas, updateMobileUnits } =
         useMobileUnits(isLoaded);
+    const defaultCenter = { lat: -4.389892, lng: 15.313868 };
 
-    // Enhanced position validation
-    const safePosition = (obj) => {
-        if (!obj) return defaultCenter;
-
-        const lat = Number(obj.lat ?? obj.position?.lat);
-        const lng = Number(obj.lng ?? obj.position?.lng);
-
-        const isValid = (
-            !isNaN(lat) &&
-            !isNaN(lng) &&
-            lat >= -90 && lat <= 90 &&
-            lng >= -180 && lng <= 180
-        );
-
-        return isValid ? { lat, lng } : defaultCenter;
-    };
-
-    // Data validation effect
+    // Real-time updates
     useEffect(() => {
-        const validateData = () => {
-            agencies.forEach((agency) => {
-                const pos = safePosition(agency);
-                if (pos === defaultCenter) {
-                    console.warn("Invalid agency position:", agency);
-                }
-            });
-
-            mobileUnits.forEach((unit) => {
-                const pos = safePosition(unit);
-                if (pos === defaultCenter) {
-                    console.warn("Invalid mobile unit position:", unit);
-                }
-            });
-        };
-
-        validateData();
-    }, [agencies, mobileUnits]);
+        if (isLoaded) {
+            const interval = setInterval(() => {
+                updateMobileUnits();
+            }, 15000); // 15s updates
+            return () => clearInterval(interval);
+        }
+    }, [isLoaded, updateMobileUnits]);
 
     // Map bounds adjustment
     const fitBounds = useCallback(() => {
-        if (!mapInstance) return;
-
-        const bounds = new google.maps.LatLngBounds();
-        const validAgencies = agencies.filter((a) =>
-            typeof a.lat === "number" && typeof a.lng === "number"
-        );
-
-        const validUnits = mobileUnits.filter((u) =>
-            u.position &&
-            typeof u.position.lat === "number" &&
-            typeof u.position.lng === "number"
-        );
-
-        [...validAgencies, ...validUnits].forEach((item) => {
-            const position = safePosition(item);
-            bounds.extend(new google.maps.LatLng(position));
-        });
-
-        if (!bounds.isEmpty()) {
+        if (mapInstance && mobileUnits.length > 0) {
+            const bounds = new window.google.maps.LatLngBounds();
+            mobileUnits.forEach((unit) =>
+                bounds.extend(new window.google.maps.LatLng(unit.position))
+            );
+            agencies.forEach((agency) =>
+                bounds.extend(new window.google.maps.LatLng(agency.lat, agency.lng))
+            );
             mapInstance.fitBounds(bounds);
         }
-    }, [mapInstance, agencies, mobileUnits]);
+    }, [mapInstance, mobileUnits, agencies]);
 
     useEffect(() => {
         if (mapInstance) fitBounds();
-    }, [mapInstance, fitBounds]);
+    }, [mapInstance, mobileUnits, agencies, fitBounds]);
 
     const handleMarkerClick = (unit) => {
         setSelectedUnit(unit);
-        const position = safePosition(unit);
-        mapInstance?.panTo(position);
+        if (mapInstance) {
+            mapInstance.panTo(unit.position);
+        }
     };
 
     if (loadError) {
@@ -133,19 +96,13 @@ const MapComponent = () => {
             <div className="mb-4">
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                    onClick={() => setFilters((prev) => ({
-                        ...prev,
-                        showAgencies: !prev.showAgencies,
-                    }))}
+                    onClick={() => setFilters({ ...filters, showAgencies: !filters.showAgencies })}
                 >
                     {filters.showAgencies ? "Masquer" : "Afficher"} Agences
                 </button>
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={() => setFilters((prev) => ({
-                        ...prev,
-                        showStops: !prev.showStops,
-                    }))}
+                    onClick={() => setFilters({ ...filters, showStops: !filters.showStops })}
                 >
                     {filters.showStops ? "Masquer" : "Afficher"} Arrêts
                 </button>
@@ -163,33 +120,25 @@ const MapComponent = () => {
             >
                 {/* Agencies Markers */}
                 {filters.showAgencies &&
-                    agencies
-                        .filter((a) => typeof a.lat === "number" && typeof a.lng === "number")
-                        .map((agency) => (
-                            <Marker
-                                key={agency.id}
-                                position={safePosition(agency)}
-                                icon={{
-                                    url: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png",
-                                    scaledSize: new google.maps.Size(40, 40),
-                                }}
-                                onClick={() => handleMarkerClick(agency)}
-                            />
-                        ))}
+                    agencies.map((agency) => (
+                        <Marker
+                            key={agency.id}
+                            position={{ lat: agency.lat, lng: agency.lng }}
+                            icon={{
+                                url: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png",
+                                scaledSize: new window.google.maps.Size(40, 40),
+                            }}
+                            onClick={() => handleMarkerClick(agency)}
+                        />
+                    ))}
 
                 {/* Mobile Units */}
                 {mobileUnits
-                    .filter(
-                        (unit) =>
-                            (filters.showStops || !alerts[unit.id]) &&
-                            unit.position &&
-                            typeof unit.position.lat === "number" &&
-                            typeof unit.position.lng === "number"
-                    )
+                    .filter((unit) => filters.showStops || !alerts[unit.id])
                     .map((unit) => (
                         <React.Fragment key={unit.id}>
                             {/* Directions Renderer */}
-                            {directions[unit.id]?.routes && (
+                            {directions[unit.id] && (
                                 <DirectionsRenderer
                                     directions={directions[unit.id]}
                                     options={{
@@ -205,12 +154,12 @@ const MapComponent = () => {
 
                             {/* Unit Marker */}
                             <Marker
-                                position={safePosition(unit)}
+                                position={unit.position}
                                 icon={{
                                     url: alerts[unit.id]
                                         ? "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-red.png"
                                         : "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-yellow.png",
-                                    scaledSize: new google.maps.Size(35, 35),
+                                    scaledSize: new window.google.maps.Size(35, 35),
                                 }}
                                 label={{
                                     text: `${Math.round(etas[unit.id] / 60)} min`,
@@ -224,7 +173,7 @@ const MapComponent = () => {
                 {/* InfoWindow */}
                 {selectedUnit && (
                     <InfoWindow
-                        position={safePosition(selectedUnit)}
+                        position={selectedUnit.position}
                         onCloseClick={() => setSelectedUnit(null)}
                     >
                         <div className="max-w-xs">
@@ -243,6 +192,4 @@ const MapComponent = () => {
             </GoogleMap>
         </div>
     );
-};
-
-export default MapComponent;
+}

@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+import axios from 'axios';
 
 const fetcher = async (...args) => {
 	try {
@@ -12,14 +12,10 @@ const fetcher = async (...args) => {
 };
 
 export const Alerts = () => {
-	const { data, error, isLoading } = useSWR('/api/alerts', fetcher, {
-		refreshInterval: 50000,
-		revalidateOnFocus: true,
-		revalidateOnReconnect: true,
-	});
+	//const { data, error, isLoading } = await axios.get(backendAgencies);
 
 	return {
-		alerts: data || [
+		alerts: [
 			{
 				type: 'warning',
 				title: "Déviation d'itinéraire",
@@ -47,7 +43,6 @@ export const Alerts = () => {
 				timestamp: '2023-10-01 14:36',
 			},
 		],
-		isLoading,
-		isError: error,
+
 	};
 };
