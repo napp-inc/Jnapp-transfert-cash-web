@@ -205,6 +205,12 @@ export default function Menu() {
                         label="Ajouter des permissions"
                         className="ml-6"
                     />
+                    <MenuItem
+                        icon={BsShieldPlus}
+                        href="/settings/modify-password"
+                        label="Changer le mot de passe"
+                        className="ml-6"
+                    />
                 </div>
 
 
