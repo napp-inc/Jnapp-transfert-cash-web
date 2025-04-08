@@ -23,7 +23,7 @@ export default function AgentList() {
             <div className="bg-gray-100 p-4 w-full">
                 <Heading
                     level="h2"
-                    children="Liste des agents"
+                    children="Liste des véhicules"
                     className="px-4 mb-6 text-lg font-bold"
                 />
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { getAllAgenciesRoute } from "../endPointsAndKeys";
+import { getAllVehiclesRoute } from "../endPointsAndKeys";
 import { DateTime } from "luxon";
 
 export default function useVehicule() {
