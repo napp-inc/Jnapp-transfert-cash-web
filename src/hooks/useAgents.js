@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { getAllAgentsRoute } from "../endPointsAndKeys";
+import { DateTime } from "luxon";
 
-export default function useAgent() {
+export default function useAgences() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,40 +16,42 @@ export default function useAgent() {
                 if (!token) {
                     throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
-                const response = await fetch(getAllAgentsRoute, {
-                    method: "GET",
+
+                // Utilisation d'axios pour effectuer la requête GET
+                const response = await axios.get(getAllAgentsRoute, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                if (!response.ok) {
-                    throw new Error("Problème de connexion au serveur");
-                }
-                const result = await response.json();
 
-                const agentsArray = Array.isArray(result)
-                    ? result
-                    : typeof result === "object" && result !== null
-                        ? [result]
-                        : [];
+                const agentsArray = response?.data?.agents || [];
+                console.log(agentsArray);
+
                 const formattedData = agentsArray.map((agent) => ({
-                    "prenom": agent.prenom || "",
-                    "nom": agent.nom || "",
-                    "postnom": agent.postnom || "",
-                    "email": agent.email || "",
-                    "telephone": agent.telephone || "",
+                    "nom": agent?.nom || "",
+                    "postnom": agent?.postnom || "",
+                    "prenom": agent?.prenom || "",
+                    "email": agent?.email || "",
+                    "telephone": agent?.telephone || "",
+                    "photo": agent?.photo || "",
                     "adresse": agent.adresse || "",
-                    "agence de référence": agent.agence?.code || "",
-                    "role": agent.role?.code || "",
-                    "ajout par": agent.creator || "",
-                    "date d'ajout": agent.dateCreation || "",
-                    "date de modification": agent.dateDerniereModification || "",
+                    "agence": agent?.agence?.code || "",
+                    "role": agent?.role?.code || "",
+                    "date d'ajout": agent?.dateCreation
+                        ? DateTime.fromMillis(Number(agent.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A",
+                    "date de modification": agent?.dateDerniereModification
+                        ? DateTime.fromMillis(Number(agent.dateDerniereModification)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A"
                 }));
+
+                console.log(formattedData);
+
 
                 setData(formattedData);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Erreur lors du chargement des agences");
             } finally {
                 setLoading(false);
             }
@@ -55,6 +59,6 @@ export default function useAgent() {
 
         fetchData();
     }, []);
-    console.log(data);
+
     return { data, loading, error };
-};
+}

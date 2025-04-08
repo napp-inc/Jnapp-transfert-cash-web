@@ -1,13 +1,17 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
+import Select from "../atoms/Select";
 import { addAgentRoute } from "../../endPointsAndKeys";
-
+import useAgences from "../../hooks/useAgences";
+import useRole from "../../hooks/useRoles";
 
 export default function AddAgentFormFields() {
+    const agences = useAgences().data || [];
+    const roles = useRole().data || [];
+
     const [formData, setFormData] = useState({
         prenom: "",
         nom: "",
@@ -16,30 +20,15 @@ export default function AddAgentFormFields() {
         telephone: "",
         adresse: "",
         password: "",
-        agence: {
-            code: "",
-            designation: "",
-        },
+        agence: "",
+        role: "",
     });
 
-    // Handle changes for top-level fields
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
-        }));
-    };
-
-    // Handle changes for nested fields in `agence`
-    const handleNestedChange = (section) => (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [section]: {
-                ...prev[section],
-                [name]: value,
-            },
         }));
     };
 
@@ -53,7 +42,7 @@ export default function AddAgentFormFields() {
             if (!token) {
                 alert("Vous n'êtes pas connecté !");
                 return;
-            };
+            }
 
             const response = await fetch(addAgentRoute, {
                 method: "POST",
@@ -74,10 +63,8 @@ export default function AddAgentFormFields() {
                     telephone: "",
                     adresse: "",
                     password: "",
-                    agence: {
-                        code: "",
-                        designation: "",
-                    },
+                    agence: "",
+                    role: "",
                 });
             } else {
                 const errorData = await response.json();
@@ -170,47 +157,35 @@ export default function AddAgentFormFields() {
                                 required
                             />
                         </div>
-                        <div className="col-span-full md:col-span-1">
-                            <Input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Mot de passe"
-                                required
-                            />
-                        </div>
                     </div>
                 </div>
 
-                {/* Agence */}
-                <div className="bg-gray-100 p-6 rounded-lg mb-8">
-                    <Heading
-                        level="h3"
-                        children="Agence"
-                        className="px-4 mb-6 text-lg font-bold text-orange-600"
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.agence.code}
-                                onChange={handleNestedChange("agence")}
-                                placeholder="Code agence"
-                                required
-                            />
-                        </div>
-                        <div className="col-span-2 md:col-span-1">
-                            <Input
-                                type="text"
-                                name="designation"
-                                value={formData.agence.designation}
-                                onChange={handleNestedChange("agence")}
-                                placeholder="Désignation agence"
-                                required
-                            />
-                        </div>
+                {/* Agence et rôle */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="col-span-1">
+                        <Select
+                            name="agence"
+                            value={formData.agence}
+                            onChange={handleChange}
+                            options={agences.map((agence) => ({
+                                value: agence.reference,
+                                label: agence.designation,
+                            }))}
+                            placeholder="Sélectionnez une agence"
+                        />
+                    </div>
+
+                    <div className="col-span-1">
+                        <Select
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            options={agences.map((agence) => ({
+                                value: agence.reference,
+                                label: agence.designation,
+                            }))}
+                            placeholder="Sélectionnez un rôle"
+                        />
                     </div>
                 </div>
             </form>

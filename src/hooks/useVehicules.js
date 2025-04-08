@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { getAllVehiclesRoute } from "../endPointsAndKeys";
+import axios from "axios";
+import { getAllAgenciesRoute } from "../endPointsAndKeys";
+import { DateTime } from "luxon";
 
-export default function useVehicle () {
+export default function useVehicule() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -9,30 +11,47 @@ export default function useVehicle () {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(getAllVehiclesRoute);
+                const token = localStorage.getItem("idToken");
 
-                if (!response.ok) {
-                    throw new Error("Problème de connexion au serveur");
+                if (!token) {
+                    throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
 
-                const result = await response.json();
-                if (Array.isArray(result)) {
-                    setData(result);
-                }
-                else if (typeof result === "object" && result !== null) {
-                    setData([result]);
-                } else {
-                    throw new Error("Format de données non reconnu");
-                }
+                // Utilisation d'axios pour effectuer la requête GET
+                const response = await axios.get(getAllVehiclesRoute, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const agencesArray = response?.data?.agences || [];
+
+                const formattedAgencies = agencesArray.map((agence, index) => ({
+                    id: index + 1,
+                    code: agence?.code || "",
+                    designation: agence?.designation || "",
+                    adresse: agence?.adresse || "",
+                    latitude: agence?.location?.latitude || "",
+                    longitude: agence?.location?.longitude || "",
+                    "date d'ajout": agence?.dateCreation
+                        ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A",
+                    "date de modification": agence.dateDerniereModification
+                        ? DateTime.fromMillis(Number(agence.dateDerniereModification)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A"
+                }));
+
+                setData(formattedAgencies);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Erreur lors du chargement des agences");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [])
+    }, []);
 
     return { data, loading, error };
-};
+}

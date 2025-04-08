@@ -15,21 +15,14 @@ export default function AgentList() {
         "Prenom",
         "Email",
         "Telephone",
+        "Photo",
+        "Adresse",
         "Agence",
         "Role",
-        "Ajouté par",
-        "Ajouté le"
+        "Date d'ajout",
+        "Date de modification",
     ]);
 
-    // Format the data for display
-    const formattedData = data.map(item => ({
-        ...item,
-        "Numéro de téléphone": item.telephone || "Inconnu",
-        "Agence": item.referenceAgence || "Inconnu", // Display referenceAgence as Agence code
-        "Role": item.referenceRole || "Inconnu",     // Display referenceRole as Role code
-        "Ajouté par": item.creator || "Inconnu",
-        "Ajouté le": new Date(item.dateCreation).toLocaleDateString("fr-FR")
-    }));
 
     return (
         <div className="sm:w-4/5 w-5/5 bg-gray-100 py-10 pl-10 h-fit justify-center items-center min-h-screen">
@@ -48,7 +41,7 @@ export default function AgentList() {
                     ) : (
                         <DataTable
                             columns={tableColumns}
-                            data={formattedData} // Use the formatted data
+                            data={data}
                             progressPending={loading}
                             progressComponent={
                                 <div className="px-4 py-8 text-center">
