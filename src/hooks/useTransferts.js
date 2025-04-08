@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { allTransfertsRoute } from "../endPointsAndKeys"
 
 export default function useTransfert ()  {
@@ -9,12 +10,22 @@ export default function useTransfert ()  {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch(allTransfertsRoute);
+				const token = localStorage.getItem("idToken");
+
+                if (!token) {
+                    throw new Error("Token non trouvé. Veuillez vous reconnecter.");
+                }
+				
+                const response = await axios.get(allTransfertsRoute, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
 				if (!response.ok) {
-					throw new Error('Problème de connexion au serveur');
-				}
-
+					throw new Error("Problème de connexion au serveur");
+				};
 				const result = await response.json();
 				console.log(result);
 

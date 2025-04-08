@@ -1,6 +1,6 @@
 "use client";
 import DataTable from "react-data-table-component";
-import Vehicles from "../../hooks/Vehicules";
+import useVehicule from "../../hooks/useVehicules";
 import customStyles from "../atoms/CustomStylesTables";
 import columns from "../atoms/TablesColums";
 import Heading from "../atoms/Heading";

@@ -1,12 +1,12 @@
 "use client";
 import DataTable from "react-data-table-component";
-import Agents from "../../hooks/Agents"; // Assuming you have a hook for fetching agents
+import useAgent from "../../hooks/useAgents";
 import customStyles from "../atoms/CustomStylesTables";
 import columns from "../atoms/TablesColums";
 import Heading from "../atoms/Heading";
 
 export default function AgentList() {
-    const { data, loading, error } = Agents();
+    const { data, loading, error } = useAgent();
 
     // Define the table columns
     const tableColumns = columns([

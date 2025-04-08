@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, useJsApiLoader } from '@react-google-maps/api';
 import { apiKeyGoogleMaps } from '../../endPointsAndKeys';
 import Heading from '../atoms/Heading';
-import useAgencies from '../../hooks/useAgencies';
+import useAgences from '../../hooks/useAgences';
 import useMobileUnits from '../../hooks/useMobileUnits';
 
 export default function MapComponent() {
@@ -24,7 +24,7 @@ export default function MapComponent() {
         showStops: true,
     });
 
-    const agencies = useAgencies();
+    const { data, loading, error } = useAgences();
 
     const { mobileUnits, alerts, directions, etas } = useMobileUnits(isLoaded);
 
@@ -44,13 +44,13 @@ export default function MapComponent() {
             <Heading level="h3" children="Carte" className="text-black-xl font-bold mb-4 title-size" />
 
             <GoogleMap mapContainerStyle={{ height: '70vh', width: '70vw' }} center={defaultCenter} zoom={15}>
-                {agencies.map((agency) => (
+                {data.map((agency) => (
                     <Marker
                         key={agency.id}
-                        position={{ lat: agency.lat, lng: agency.lng }}
+                        position={{ lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) }}
                         icon={{
                             url: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png',
-                            scaledSize: new window.google.maps.Size(50, 50),
+                            scaledSize: new window.google.maps.Size(40, 40),
                         }}
                     />
                 ))}

@@ -25,13 +25,16 @@ export default function useAgences() {
                     },
                 });
 
-                const agencesArray = response.data.agences || [];
+                const agencesArray = response?.data?.agences || [];
 
-                const formattedAgencies = agencesArray.map(agence => ({
-                    code: agence.code || "",
-                    designation: agence.designation || "",
-                    adresse: agence.adresse || "",
-                    "date d'ajout": agence.dateCreation
+                const formattedAgencies = agencesArray.map((agence, index) => ({
+                    id: index + 1,
+                    code: agence?.code || "",
+                    designation: agence?.designation || "",
+                    adresse: agence?.adresse || "",
+                    latitude: agence?.location?.latitude || "",
+                    longitude: agence?.location?.longitude || "",
+                    "date d'ajout": agence?.dateCreation
                         ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
                         : "N/A",
                     "date de modification": agence.dateDerniereModification
