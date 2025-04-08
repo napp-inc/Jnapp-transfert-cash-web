@@ -1,65 +1,108 @@
-"use client";
+"use client"; // Ce fichier est explicitement un composant côté client
+
 import React, { useState } from "react";
 import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
+import Popup from "../atoms/Popup";
 import { addVehicleRoute } from "../../endPointsAndKeys";
+import { auth } from "../../firebase";
+import axios from "axios";
 
 export default function AddVehicleForm() {
+    const [popupMessage, setPopupMessage] = useState(null); // État pour le popup
+    const [loading, setLoading] = useState(false); // État pour le chargement
     const [formData, setFormData] = useState({
-        marque: "",
-        modele: "",
-        immatriculation: ""
+        newVehicule: {
+            immatriculation: "",
+            marque: "",
+            modele: "",
+            driver: ""
+        },
+        creator: ""
     });
 
+    // Gestion des changements dans les champs imbriqués
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+
+        // Si le champ appartient à `newVehicule`, on met à jour cet objet spécifique
+        if (name.startsWith("newVehicule.")) {
+            const key = name.split(".")[1];
+            setFormData((prev) => ({
+                ...prev,
+                newVehicule: {
+                    ...prev.newVehicule,
+                    [key]: value
+                }
+            }));
+        } else {
+            // Sinon, on met à jour directement formData
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
+    // Gestion de la soumission du formulaire
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.marque || !formData.modele || !formData.immatriculation) {
-            alert("Veuillez remplir tous les champs.");
-            return;
-        }
+        setLoading(true);
+        setPopupMessage(null);
 
         try {
+            // Vérification de l'utilisateur connecté
+            const user = auth.currentUser;
+            if (!user) {
+                setPopupMessage("Vous n'êtes pas connecté !");
+                return;
+            }
             const token = localStorage.getItem("idToken");
-
             if (!token) {
-                alert("Vous n'êtes pas connecté !");
+                setPopupMessage("Erreur lors de la récupération du token.");
                 return;
             }
 
-            const response = await fetch(addVehicleRoute, {
-                method: "POST",
+            // Préparation des données à envoyer
+            const requestData = {
+                ...formData,
+                creator: user.uid
+            };
+            console.log(requestData);
+            // Envoi de la requête POST avec Axios directement
+            const response = await axios.post(addVehicleRoute, requestData, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formData)
             });
-
-            if (response.ok) {
-                alert("Véhicule ajouté avec succès");
+            
+            if (response.status === 200 || response.status === 201) {
+                setPopupMessage("Véhicule créé avec succès !");
                 setFormData({
-                    marque: "",
-                    modele: "",
-                    immatriculation: ""
+                    newVehicule: {
+                        immatriculation: "",
+                        marque: "",
+                        modele: "",
+                        driver: ""
+                    },
+                    creator: ""
                 });
             } else {
-                const errorData = await response.json();
-                console.error("Erreur de création:", errorData);
-                alert(`Erreur lors de l'ajout du véhicule: ${errorData.message || "Une erreur est survenue"}`);
+                throw new Error("Erreur lors de la création du véhicule.");
             }
         } catch (error) {
             console.error("Erreur:", error);
-            alert("Erreur lors de l'ajout du véhicule");
+            if (error.response) {
+                // Erreur renvoyée par le serveur
+                setPopupMessage(error.response.data.message || "Une erreur est survenue.");
+            } else {
+                // Erreur réseau ou autre
+                setPopupMessage(error.message || "Une erreur est survenue.");
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -69,9 +112,10 @@ export default function AddVehicleForm() {
                 <div className="flex items-center justify-between mb-12">
                     <Heading
                         level="h2"
-                        children="Ajouter un nouveau véhicule"
                         className="px-4 mt-4 text-xl font-bold text-center"
-                    />
+                    >
+                        Ajouter un nouveau véhicule
+                    </Heading>
                     <div className="w-1/4">
                         <Button text="Enregistrer" type="submit" />
                     </div>
@@ -80,16 +124,17 @@ export default function AddVehicleForm() {
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
-                        children="Informations du véhicule"
                         className="px-4 mb-6 text-lg font-bold"
-                    />
+                    >
+                        Informations du véhicule
+                    </Heading>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="col-span-1">
                             <Input
                                 type="text"
-                                name="marque"
-                                value={formData.marque}
+                                name="newVehicule.marque"
+                                value={formData.newVehicule.marque}
                                 onChange={handleChange}
                                 placeholder="Marque"
                             />
@@ -98,8 +143,8 @@ export default function AddVehicleForm() {
                         <div className="col-span-1">
                             <Input
                                 type="text"
-                                name="modele"
-                                value={formData.modele}
+                                name="newVehicule.modele"
+                                value={formData.newVehicule.modele}
                                 onChange={handleChange}
                                 placeholder="Modèle"
                             />
@@ -108,15 +153,33 @@ export default function AddVehicleForm() {
                         <div className="col-span-1">
                             <Input
                                 type="text"
-                                name="immatriculation"
-                                value={formData.immatriculation}
+                                name="newVehicule.immatriculation"
+                                value={formData.newVehicule.immatriculation}
                                 onChange={handleChange}
                                 placeholder="Immatriculation"
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <Input
+                                type="text"
+                                name="newVehicule.driver"
+                                value={formData.newVehicule.driver}
+                                onChange={handleChange}
+                                placeholder="Chauffeur"
                             />
                         </div>
                     </div>
                 </div>
             </form>
+
+            {/* Affichage du popup */}
+            {popupMessage && (
+                <Popup
+                    message={popupMessage}
+                    onClose={() => setPopupMessage(null)}
+                />
+            )}
         </div>
     );
 }
