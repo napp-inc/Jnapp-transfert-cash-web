@@ -1,17 +1,17 @@
-"use client"; // Ce fichier est explicitement un composant côté client
+"use client";
 
 import React, { useState } from "react";
+import axios from "axios";
+import { auth } from "../../firebase";
 import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
 import Popup from "../atoms/Popup";
 import { addVehicleRoute } from "../../endPointsAndKeys";
-import { auth } from "../../firebase";
-import axios from "axios";
 
 export default function AddVehicleForm() {
-    const [popupMessage, setPopupMessage] = useState(null); // État pour le popup
-    const [loading, setLoading] = useState(false); // État pour le chargement
+    const [popupMessage, setPopupMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         newVehicule: {
             immatriculation: "",
@@ -22,11 +22,9 @@ export default function AddVehicleForm() {
         creator: ""
     });
 
-    // Gestion des changements dans les champs imbriqués
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Si le champ appartient à `newVehicule`, on met à jour cet objet spécifique
         if (name.startsWith("newVehicule.")) {
             const key = name.split(".")[1];
             setFormData((prev) => ({
@@ -37,7 +35,6 @@ export default function AddVehicleForm() {
                 }
             }));
         } else {
-            // Sinon, on met à jour directement formData
             setFormData((prev) => ({
                 ...prev,
                 [name]: value
@@ -45,39 +42,38 @@ export default function AddVehicleForm() {
         }
     };
 
-    // Gestion de la soumission du formulaire
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setPopupMessage(null);
 
         try {
-            // Vérification de l'utilisateur connecté
             const user = auth.currentUser;
             if (!user) {
                 setPopupMessage("Vous n'êtes pas connecté !");
                 return;
             }
+
             const token = localStorage.getItem("idToken");
             if (!token) {
                 setPopupMessage("Erreur lors de la récupération du token.");
                 return;
             }
 
-            // Préparation des données à envoyer
             const requestData = {
                 ...formData,
                 creator: user.uid
             };
-            console.log(requestData);
-            // Envoi de la requête POST avec Axios directement
+            console.log("Données envoyées :", requestData);
+
             const response = await axios.post(addVehicleRoute, requestData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });
-            
+            console.log("Réponse du backend :", response.data);
+
             if (response.status === 200 || response.status === 201) {
                 setPopupMessage("Véhicule créé avec succès !");
                 setFormData({
@@ -93,13 +89,16 @@ export default function AddVehicleForm() {
                 throw new Error("Erreur lors de la création du véhicule.");
             }
         } catch (error) {
-            console.error("Erreur:", error);
+            console.error("Erreur complète :", error);
             if (error.response) {
-                // Erreur renvoyée par le serveur
+                console.error("Réponse du backend :", error.response.data);
                 setPopupMessage(error.response.data.message || "Une erreur est survenue.");
+            } else if (error.request) {
+                console.error("Pas de réponse du serveur :", error.request);
+                setPopupMessage(`Pas de réponse du serveur.${error.request}`);
             } else {
-                // Erreur réseau ou autre
-                setPopupMessage(error.message || "Une erreur est survenue.");
+                console.error("Erreur inconnue :", error.message);
+                setPopupMessage(error.message);
             }
         } finally {
             setLoading(false);
@@ -173,7 +172,6 @@ export default function AddVehicleForm() {
                 </div>
             </form>
 
-            {/* Affichage du popup */}
             {popupMessage && (
                 <Popup
                     message={popupMessage}
