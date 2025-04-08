@@ -38,9 +38,7 @@ export default function AgentList() {
                             data={data}
                             progressPending={loading}
                             progressComponent={
-                                <div className="px-4 py-8 text-center">
-                                    Chargement en cours...
-                                </div>
+                                <div class="loader"></div>
                             }
                             noDataComponent={
                                 <div className="px-4 py-8 text-center">

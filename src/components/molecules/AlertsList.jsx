@@ -21,7 +21,7 @@ export default function AlertsList() {
                     </div>
                     : isLoading ?
                         <div className={`flex items-center p-4 mb-4 rounded-lg bg-gray-100`}>
-                            <Heading level="h3" children="Chargement ..." className="font-bold text-black-200" />
+                            <div class="loader"></div>
                         </div>
                         :
                         (

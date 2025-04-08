@@ -36,7 +36,7 @@ export default function MapComponent() {
     }
 
     if (!isLoaded) {
-        return <Heading level="h3" children="Chargement ..." className="font-bold text-black-200" />;
+        return (<div class="loader"></div>);
     }
 
     return (

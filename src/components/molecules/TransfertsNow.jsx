@@ -52,9 +52,7 @@ export default function TransfertsDashboard() {
                         data={formattedData} // Use the filtered and formatted data
                         progressPending={loading}
                         progressComponent={
-                            <div className="px-4 py-8 text-center">
-                                Chargement en cours...
-                            </div>
+                            <div class="loader"></div>
                         }
                         noDataComponent={
                             <div className="px-4 py-8 text-center">
