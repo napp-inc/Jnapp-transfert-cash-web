@@ -36,7 +36,11 @@ export default function MapComponent() {
     }
 
     if (!isLoaded) {
-        return (<div class="loader"></div>);
+        return (
+            <div className='flex justify-center align-middle items-center'>
+                <div class="loader"></div>
+            </div>
+        );
     }
 
     return (
