@@ -5,36 +5,29 @@ import customStyles from "../atoms/CustomStylesTables";
 import columns from "../atoms/TablesColums";
 import Heading from "../atoms/Heading";
 
-export default function VehicleList() {
-    const { data, loading, error } = Vehicles();
+export default function AgentList() {
+    const { data, loading, error } = useVehicule();
 
+    // Define the table columns
     const tableColumns = columns([
         "Marque",
         "Modele",
         "Immatriculation",
-        "Status",
-        "Ajouté par",
-        "Ajouté le"
+        "Date d'ajout",
+        "Date de modification",
     ]);
 
-    const formattedData = data.map(item => ({
-        ...item,
-        "Status": item.status === "FREE" ? "Libre" : "Utilisé",
-        "Ajouté par": item.creator || "Inconnu",
-        "Ajouté le": new Date(item.dateAjout).toLocaleDateString("fr-FR")
-    }));
 
     return (
         <div className="sm:w-4/5 w-5/5 bg-gray-100 py-10 pl-10 h-fit justify-center items-center min-h-screen">
-
             <div className="bg-gray-100 p-4 w-full">
                 <Heading
                     level="h2"
-                    children="Liste des véhicules"
+                    children="Liste des agents"
                     className="px-4 mb-6 text-lg font-bold"
                 />
 
-                <div className="vehicles-table overflow-auto hide-scrollbar">
+                <div className="agents-table overflow-auto hide-scrollbar">
                     {error ? (
                         <div className="px-4 py-8 text-center text-red-500">
                             ⚠️ Erreur: {error}
@@ -42,7 +35,7 @@ export default function VehicleList() {
                     ) : (
                         <DataTable
                             columns={tableColumns}
-                            data={formattedData} // Use the formatted data
+                            data={data}
                             progressPending={loading}
                             progressComponent={
                                 <div className="px-4 py-8 text-center">
@@ -51,7 +44,7 @@ export default function VehicleList() {
                             }
                             noDataComponent={
                                 <div className="px-4 py-8 text-center">
-                                    {loading ? "" : "Aucun véhicule trouvé"}
+                                    {loading ? "" : "Aucun agent trouvé"}
                                 </div>
                             }
                             customStyles={customStyles}
@@ -64,9 +57,6 @@ export default function VehicleList() {
                     )}
                 </div>
             </div>
-
-
         </div>
-
     );
 }

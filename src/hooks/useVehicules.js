@@ -17,7 +17,6 @@ export default function useVehicule() {
                     throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
 
-                // Utilisation d'axios pour effectuer la requête GET
                 const response = await axios.get(getAllVehiclesRoute, {
                     headers: {
                         "Content-Type": "application/json",
@@ -25,24 +24,25 @@ export default function useVehicule() {
                     },
                 });
 
-                const agencesArray = response?.data?.agences || [];
+                const vehiculesArray = response?.data?.vehicules || [];
+                console.log(vehiculesArray);
 
-                const formattedAgencies = agencesArray.map((agence, index) => ({
+                const formattedvehicule = agencesArray.map((vehicule, index) => ({
                     id: index + 1,
-                    code: agence?.code || "",
-                    designation: agence?.designation || "",
-                    adresse: agence?.adresse || "",
-                    latitude: agence?.location?.latitude || "",
-                    longitude: agence?.location?.longitude || "",
+                    reference: vehicule?.id || "",
+                    marque: vehicule?.marque || "",
+                    modele: vehicule?.modele || "",
+                    immatriculation: vehicule?.immatriculation || "",
+                    etat: vehicule?.status === "USED" ? "EN COURSE" : vehicule?.status === "FREE" ? "DISPONIBLE" : "N/A",
                     "date d'ajout": agence?.dateCreation
                         ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
                         : "N/A",
-                    "date de modification": agence.dateDerniereModification
+                    "date de modification": agence?.dateDerniereModification
                         ? DateTime.fromMillis(Number(agence.dateDerniereModification)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
                         : "N/A"
                 }));
 
-                setData(formattedAgencies);
+                setData(formattedvehicule);
             } catch (err) {
                 setError(err.message || "Erreur lors du chargement des agences");
             } finally {
