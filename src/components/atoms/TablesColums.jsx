@@ -4,7 +4,7 @@ export default function columns(columsTable) {
         name: col,
         selector: row => row[col.toLowerCase()] || '-',
         sortable: true,
-        wrap: true
+        wrap: true,
     }));
     
     return colonnes;

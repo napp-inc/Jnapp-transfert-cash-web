@@ -1,3 +1,5 @@
+import columns from "./TablesColums";
+
 const customStyles = {
     headRow: {
         style: {
@@ -42,6 +44,12 @@ const customStyles = {
             textAlign: 'left', // Alignement du texte pour une meilleure lisibilité
         },
     },
+    columns:{
+        style: {
+            minWidth: '150px', // Largeur minimale pour éviter le troncage
+            maxWidth: '300px', // Limite la largeur maximale si nécessairé
+        },
+    }
 };
 
 export default customStyles;
