@@ -17,7 +17,6 @@ export default function useAgences() {
                     throw new Error("Token non trouvé. Veuillez vous reconnecter.");
                 }
 
-                // Utilisation d'axios pour effectuer la requête GET
                 const response = await axios.get(getAllAgentsRoute, {
                     headers: {
                         "Content-Type": "application/json",
@@ -47,7 +46,6 @@ export default function useAgences() {
                 }));
 
                 console.log(formattedData);
-
 
                 setData(formattedData);
             } catch (err) {
