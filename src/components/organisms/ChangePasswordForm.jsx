@@ -27,7 +27,6 @@ export default function ChangePasswordForm() {
 
             await updatePassword(user, newPassword);
 
-
             setPopupMessage("Vous avez modifié votre mot de passe avec succès.");
             setTimeout(() => {
                 router.push('/dashboard');

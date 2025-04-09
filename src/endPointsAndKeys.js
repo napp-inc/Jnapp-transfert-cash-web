@@ -1,4 +1,4 @@
-export const apiBackendRoute = "http://TRUCS-A-REMPLIR";
+export const apiBackendRoute = "";
 
 export const apiKeyGoogleMaps = "AIzaSyBf2zOFDzh_TxDRl0Lg6Jqp8sZMJ9Z-j7I";
 
@@ -12,17 +12,17 @@ export const addOrganisationRoute = "https://organisations-tfcv6lmhba-uc.a.run.a
 
 export const addAgencyRoute = "https://agence-tfcv6lmhba-uc.a.run.app/create";
 
-export const addAgentRoute = "https://agent-tfcv6lmhba-uc.a.run.app/create";
+export const addAgentRoute = "https://us-central1-stagiaire-2025.cloudfunctions.net/agent/register";
 
-export const getAllVehiclesRoute = "http://localhost:3000/vehicles";
+export const getAllVehiclesRoute = "https://us-central1-stagiaire-2025.cloudfunctions.net/getVehicule?codeOrganisation=125DALLIA";
 
-export const getAllAgentsRoute = "https://agent-tfcv6lmhba-uc.a.run.app/listAgents";
+export const getAllAgentsRoute = "https://us-central1-stagiaire-2025.cloudfunctions.net/agent/listAgents";
 
 export const getAllAgenciesRoute = "https://agence-tfcv6lmhba-uc.a.run.app/listAgences";
 
-export const initTransfertRoute = "http://TRUCS-A-REMPLIR";
+export const initTransfertRoute = "";
 
-export const counterCheckTransfertRoute = "http://TRUCS-A-REMPLIR";
+export const counterCheckTransfertRoute = "";
 
 export const registerRoute = "https://organisation-tfcv6lmhba-uc.a.run.app/create";
 
@@ -32,3 +32,15 @@ export const addPermissionRoute = "https://superadmin-tfcv6lmhba-uc.a.run.app/pe
 
 
 export const allTransfertsRoute = "https://transferts-tfcv6lmhba-uc.a.run.app/listTransferts";
+
+export const getCaisseRoute = "";
+
+export const getCompteRoute = "";
+
+export const getBanqueRoute = "";
+
+export const AddCaisseRoute = "https://caisse-tfcv6lmhba-uc.a.run.app/create";
+
+export const AddCompteRoute = "https://compte-tfcv6lmhba-uc.a.run.app/create";
+
+export const AddBanqueRoute = "https://banque-tfcv6lmhba-uc.a.run.app/create";

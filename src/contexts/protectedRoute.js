@@ -22,7 +22,7 @@ export default function ProtectedRoute({ children }) {
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center h-screen">
-				<div class="loader"></div>
+				<div className="loader"></div>
 			</div>
 		);
 	}

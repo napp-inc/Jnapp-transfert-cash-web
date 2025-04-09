@@ -10,9 +10,9 @@ import { apiKeyGoogleMaps } from "../../endPointsAndKeys";
 
 const defaultCenter = { lat: -4.389892, lng: 15.313868 };
 
+
 export default function AddAgenceFormFields() {
     const [formData, setFormData] = useState({
-        code: "",
         designation: "",
         adresse: "",
         localisation: {
@@ -21,9 +21,9 @@ export default function AddAgenceFormFields() {
         },
     });
 
-    const [selectedPosition, setSelectedPosition] = useState(defaultCenter); // État pour la position sur la carte
-    const [popupMessage, setPopupMessage] = useState(null); // État pour le popup
-    const [loading, setLoading] = useState(false); // État pour gérer le chargement
+    const [selectedPosition, setSelectedPosition] = useState(defaultCenter);
+    const [popupMessage, setPopupMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData((prev) => ({
@@ -67,16 +67,14 @@ export default function AddAgenceFormFields() {
                 },
             };
 
-            const response = await fetch(addAgencyRoute, {
-                method: "POST",
+            const response = await axios.post(addAgencyRoute, requestData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(requestData),
             });
 
-            if (response.ok) {
+            if (response.status === 200 || response.status === 201) {
                 setPopupMessage("Agence créée avec succès !");
                 setFormData({
                     code: "",
@@ -117,7 +115,6 @@ export default function AddAgenceFormFields() {
                     </div>
                 </div>
 
-                {/* Informations principales */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -126,16 +123,6 @@ export default function AddAgenceFormFields() {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
-                                name="code"
-                                value={formData.code}
-                                onChange={handleChange}
-                                placeholder="Code agence"
-                            />
-                        </div>
-
                         <div className="col-span-2 md:col-span-1">
                             <Input
                                 type="text"
@@ -158,7 +145,6 @@ export default function AddAgenceFormFields() {
                     </div>
                 </div>
 
-                {/* Carte Google Maps */}
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
                         level="h3"
@@ -196,7 +182,6 @@ export default function AddAgenceFormFields() {
                 </div>
             </form>
 
-            {/* Affichage du popup */}
             <Popup
                 message={popupMessage}
                 onClose={() => setPopupMessage(null)}

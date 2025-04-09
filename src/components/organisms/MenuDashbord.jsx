@@ -17,6 +17,7 @@ import {
     BsArrowLeftRight,// Arrow left right icon
     BsBell,// Bell icon
     BsClipboardData,// Clipboard data icon
+    BsList,// List icon
     BsPerson,// Person icon
     BsGear,// Gear icon
     BsChevronRight,// Chevron right icon
@@ -66,17 +67,22 @@ export default function Menu() {
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 <MenuItem icon={BsSpeedometer2} href="/dashboard" label="Tableau de bord" />
 
-                <MenuItem icon={BsCarFront} href="/vehicules/list-vehicle" label="Véhicules" onClick={(e) => {
+                <MenuItem icon={BsList} href="/vehicules/list-vehicle" label="Véhicules" onClick={(e) => {
                     e.preventDefault();
                     setIsVehicleOpen(!isVehicleOpen);
-                }} />
+                }} rightIcon={() => (
+                    <BsChevronRight
+                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
+                            }`}
+                    />
+                )} />
                 {/* Sous menu des véhicules */}
                 <div
                     className={`${isVehicleOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
-                        icon={BsPlusCircle}
+                        icon={BsList}
                         href="/vehicules/list-vehicle"
                         label="Liste des véhicules"
                         className="ml-6"
@@ -92,14 +98,19 @@ export default function Menu() {
                 <MenuItem icon={BsPeople} href="" label="Agents" onClick={(e) => {
                     e.preventDefault;
                     setIsAgentsOpen(!isAgentsOpen)
-                }} />
+                }} rightIcon={() => (
+                    <BsChevronRight
+                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
+                            }`}
+                    />
+                )} />
                 {/* Sous menu des Agents */}
                 <div
                     className={`${isAgentsOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
-                        icon={BsPlusCircle}
+                        icon={BsList}
                         href="/agents/list-agents"
                         label="Liste des agents"
                         className="ml-6"
@@ -115,7 +126,12 @@ export default function Menu() {
                 <MenuItem icon={BsBuildings} href="" label="Agences" onClick={(e) => {
                     e.preventDefault;
                     setIsAgencyOpen(!isAgencyOpen)
-                }} />
+                }} rightIcon={() => (
+                    <BsChevronRight
+                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
+                            }`}
+                    />
+                )} />
                 {/* Sous menu des Agences */}
                 <div
                     className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"
@@ -123,32 +139,81 @@ export default function Menu() {
                 >
                     <MenuItem
                         icon={BsPlusCircle}
+                        href="/agency/add-agency"
+                        label="Ajouter une agence"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/agency/add-caisse"
+                        label="Ajouter une caisse"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsList}
                         href="/agency/list-agency"
                         label="Liste des agences"
                         className="ml-6"
                     />
                     <MenuItem
-                        icon={BsShieldPlus}
-                        href="/agency/add-agency"
-                        label="Ajouter une agence"
+                        icon={BsList}
+                        href="/agency/list-caisse"
+                        label="Liste des caisses"
+                        className="ml-6"
+                    />
+                </div>
+
+                <MenuItem icon={BsBuildings} href="" label="Banques" onClick={(e) => {
+                    e.preventDefault;
+                    setIsAgencyOpen(!isAgencyOpen)
+                }} rightIcon={() => (
+                    <BsChevronRight
+                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
+                            }`}
+                    />
+                )} />
+                {/* Sous menu des Banques */}
+                <div
+                    className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"
+                        } overflow-hidden transition-all duration-300`}
+                >
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/banque/add-banque"
+                        label="Ajouter une banque"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsList}
+                        href="/banque/list-banque"
+                        label="Liste des banque"
+                        className="ml-6"
+                    />
+                    <MenuItem
+                        icon={BsList}
+                        href="/banque/list-compte"
+                        label="Liste des comptes"
                         className="ml-6"
                     />
                 </div>
 
                 {/* <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" /> */}
-
-
                 <MenuItem icon={BsArrowLeftRight} href="" label="Transferts" onClick={(e) => {
                     e.preventDefault;
                     setIsTransfertOpen(!isTransfertOpen);
-                }} />
+                }} rightIcon={() => (
+                    <BsChevronRight
+                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
+                            }`}
+                    />
+                )} />
                 {/* Sous menu des Transferts */}
                 <div
                     className={`${isTransfertOpen ? "max-h-fit" : "max-h-0"
                         } overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
-                        icon={BsShieldPlus}
+                        icon={BsList}
                         href="/transferts/list-transfert"
                         label="Liste des transferts"
                         className="ml-6"
@@ -159,6 +224,19 @@ export default function Menu() {
                         label="Initier un transfert"
                         className="ml-6"
                     />
+                    <MenuItem
+                        icon={BsPlusCircle}
+                        href="/transferts/check"
+                        label="Vérifier un transfert"
+                        className="ml-6"
+                    />
+
+                    {/*<MenuItem
+                        icon={BsPlusCircle}
+                        href="/transferts/validate-transfert"
+                        label="Valider un transfert"
+                        className="ml-6"
+                    />*/}
                 </div>
 
 
@@ -212,7 +290,6 @@ export default function Menu() {
                         className="ml-6"
                     />
                 </div>
-
 
                 <Button text="Deconnexion" type="submit" onClick={handleLogout} />
             </MenuSection>

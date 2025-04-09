@@ -1,5 +1,7 @@
 "use client";
+
 import React, { useState } from "react";
+import axios from "axios";
 import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
@@ -19,9 +21,9 @@ export default function AddAgentFormFields() {
         email: "",
         telephone: "",
         adresse: "",
-        password: "",
+        photo: "",
         agence: "",
-        role: "",
+        role: "x5tmxJwNMcC95hZ3V0q7", // À changer quand on aura l'endpoint de rôle
     });
 
     const handleChange = (e) => {
@@ -32,7 +34,6 @@ export default function AddAgentFormFields() {
         }));
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Données à envoyer:", formData);
@@ -44,16 +45,14 @@ export default function AddAgentFormFields() {
                 return;
             }
 
-            const response = await fetch(addAgentRoute, {
-                method: "POST",
+            const response = await axios.post(addAgentRoute, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(formData),
             });
 
-            if (response.ok) {
+            if (response.status === 200 || response.status === 201) {
                 alert("Agent créé avec succès !");
                 setFormData({
                     prenom: "",
@@ -64,15 +63,20 @@ export default function AddAgentFormFields() {
                     adresse: "",
                     password: "",
                     agence: "",
-                    role: "",
+                    role: "x5tmxJwNMcC95hZ3V0q7", // À changer quand on aura l'endpoint de rôle
                 });
             } else {
-                const errorData = await response.json();
-                alert(`Erreur lors de la création: ${errorData.message || "Erreur inconnue"}`);
+                throw new Error(response.data.message || "Erreur inconnue");
             }
         } catch (error) {
             console.error("Erreur:", error);
-            alert("Une erreur s'est produite lors de la création.");
+            if (error.response) {
+                alert(`Erreur lors de la création: ${error.response.data.message || "Erreur inconnue"}`);
+            } else if (error.request) {
+                alert("Pas de réponse du serveur. Vérifiez votre connexion.");
+            } else {
+                alert("Une erreur s'est produite lors de la création.");
+            }
         }
     };
 
@@ -175,18 +179,29 @@ export default function AddAgentFormFields() {
                         />
                     </div>
 
-                    <div className="col-span-1">
+                    <Select // À changer quand on aura l'endpoint de rôle
+                        name="role"
+                        value="x5tmxJwNMcC95hZ3V0q7"
+                        onChange={handleChange}
+                        options={[{
+                            value: "x5tmxJwNMcC95hZ3V0q7",
+                            label: "Admin"
+                        }]}
+                        placeholder="Sélectionnez un rôle"
+                    />
+
+                    {/*<div className="col-span-1">
                         <Select
                             name="role"
                             value={formData.role}
                             onChange={handleChange}
-                            options={agences.map((agence) => ({
-                                value: agence.reference,
-                                label: agence.designation,
+                            options={roles.map((role) => ({
+                                value: role.reference,
+                                label: role.designation,
                             }))}
                             placeholder="Sélectionnez un rôle"
                         />
-                    </div>
+                    </div>*/}
                 </div>
             </form>
         </div>

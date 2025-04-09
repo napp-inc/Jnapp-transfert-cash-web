@@ -23,28 +23,36 @@ export default function useVehicule() {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log(response);
+                const vehiculesArray = response?.data?.elems || [];
 
-                const vehiculesArray = response?.data?.vehicules || [];
-                console.log(vehiculesArray);
+                const formattedVehicules = vehiculesArray.map((vehicule, index) => {
+                    const createdAt = vehicule?.createdAt?._seconds
+                        ? DateTime.fromMillis(
+                            vehicule.createdAt._seconds * 1000 + Math.floor(vehicule.createdAt._nanoseconds / 1e6)
+                        )
+                            .setLocale("fr")
+                            .toLocaleString(DateTime.DATETIME_MED)
+                        : "N/A";
 
-                const formattedvehicule = agencesArray.map((vehicule, index) => ({
-                    id: index + 1,
-                    reference: vehicule?.id || "",
-                    marque: vehicule?.marque || "",
-                    modele: vehicule?.modele || "",
-                    immatriculation: vehicule?.immatriculation || "",
-                    etat: vehicule?.status === "USED" ? "EN COURSE" : vehicule?.status === "FREE" ? "DISPONIBLE" : "N/A",
-                    "date d'ajout": agence?.dateCreation
-                        ? DateTime.fromMillis(Number(agence.dateCreation)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
-                        : "N/A",
-                    "date de modification": agence?.dateDerniereModification
-                        ? DateTime.fromMillis(Number(agence.dateDerniereModification)).setLocale('fr').toLocaleString(DateTime.DATETIME_MED)
-                        : "N/A"
-                }));
+                    return {
+                        id: index + 1,
+                        reference: vehicule?.id || "",
+                        marque: vehicule?.marque || "",
+                        modele: vehicule?.modele || "",
+                        immatriculation: vehicule?.immatriculation || "",
+                        etat: vehicule?.statut === "USED"
+                            ? "EN COURSE"
+                            : vehicule?.statut === "FREE"
+                                ? "DISPONIBLE"
+                                : "N/A",
+                        "date d'ajout": createdAt, // Clé sans espace
+                    };
+                });
 
-                setData(formattedvehicule);
+                setData(formattedVehicules);
             } catch (err) {
-                setError(err.message || "Erreur lors du chargement des agences");
+                setError(err.message || "Erreur lors du chargement des véhicules");
             } finally {
                 setLoading(false);
             }

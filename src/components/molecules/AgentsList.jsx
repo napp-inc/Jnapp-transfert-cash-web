@@ -5,22 +5,16 @@ import customStyles from "../atoms/CustomStylesTables";
 import columns from "../atoms/TablesColums";
 import Heading from "../atoms/Heading";
 
-export default function AgentList() {
+export default function VehicleList() {
     const { data, loading, error } = useAgent();
 
     // Define the table columns
     const tableColumns = columns([
-        "Nom",
-        "Postnom",
-        "Prenom",
-        "Email",
-        "Telephone",
-        "Photo",
-        "Adresse",
-        "Agence",
-        "Role",
-        "Date d'ajout",
-        "Date de modification",
+        //"Reference",
+        "Marque",
+        "Modele",
+        "Immatriculation",
+        "Etat"
     ]);
 
 
@@ -44,7 +38,7 @@ export default function AgentList() {
                             data={data}
                             progressPending={loading}
                             progressComponent={
-                                <div class="loader"></div>
+                                <div className="loader"></div>
                             }
                             noDataComponent={
                                 <div className="px-4 py-8 text-center">

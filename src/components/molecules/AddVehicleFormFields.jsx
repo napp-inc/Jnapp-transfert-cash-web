@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { auth } from "../../firebase";
+import { getIdToken } from "firebase/auth";
 import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
@@ -21,6 +22,22 @@ export default function AddVehicleForm() {
         },
         creator: ""
     });
+
+    const refreshIdToken = async () => {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                const token = await getIdToken(user, true); // Rafraîchit le token
+                localStorage.setItem("idToken", token);
+                return token;
+            } catch (error) {
+                console.error("Erreur lors du rafraîchissement du token :", error);
+                throw new Error("Impossible de rafraîchir le token.");
+            }
+        } else {
+            throw new Error("Aucun utilisateur connecté.");
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,6 +59,26 @@ export default function AddVehicleForm() {
         }
     };
 
+    const validateFormData = () => {
+        const { immatriculation, marque, modele, driver } = formData.newVehicule;
+
+        if (!immatriculation || !marque || !modele || !driver) {
+            throw new Error("Tous les champs sont obligatoires.");
+        }
+
+        if (immatriculation.length < 6) {
+            throw new Error("L'immatriculation doit contenir au moins 6 caractères.");
+        }
+
+        if (marque.length < 2 || modele.length < 2) {
+            throw new Error("La marque et le modèle doivent contenir au moins 2 caractères.");
+        }
+
+        if (driver.length < 3) {
+            throw new Error("Le nom du chauffeur doit contenir au moins 3 caractères.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -54,24 +91,29 @@ export default function AddVehicleForm() {
                 return;
             }
 
-            const token = localStorage.getItem("idToken");
+            let token = localStorage.getItem("idToken");
             if (!token) {
-                setPopupMessage("Erreur lors de la récupération du token.");
-                return;
+                token = await refreshIdToken();
             }
+
+            validateFormData();
 
             const requestData = {
                 ...formData,
                 creator: user.uid
             };
-            console.log("Données envoyées :", requestData);
+            console.log("Données envoyées and token", requestData, token);
 
-            const response = await axios.post(addVehicleRoute, requestData, {
+            // Envoyer la requête POST
+            const response = await fetch(addVehicleRoute, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-            });
+                body: JSON.stringify(requestData),
+            });  
+            
             console.log("Réponse du backend :", response.data);
 
             if (response.status === 200 || response.status === 201) {
@@ -95,7 +137,7 @@ export default function AddVehicleForm() {
                 setPopupMessage(error.response.data.message || "Une erreur est survenue.");
             } else if (error.request) {
                 console.error("Pas de réponse du serveur :", error.request);
-                setPopupMessage(`Pas de réponse du serveur.${error.request}`);
+                setPopupMessage("Pas de réponse du serveur. Vérifiez votre connexion.");
             } else {
                 console.error("Erreur inconnue :", error.message);
                 setPopupMessage(error.message);
@@ -104,6 +146,17 @@ export default function AddVehicleForm() {
             setLoading(false);
         }
     };
+
+    // Préremplir le créateur une fois que l'utilisateur est connecté
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (user) {
+            setFormData((prev) => ({
+                ...prev,
+                creator: user.uid
+            }));
+        }
+    }, []);
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -116,9 +169,13 @@ export default function AddVehicleForm() {
                         Ajouter un nouveau véhicule
                     </Heading>
                     <div className="w-1/4">
-                        <Button text="Enregistrer" type="submit" />
+                        <Button text="Enregistrer" type="submit" disabled={loading} />
                     </div>
                 </div>
+
+                {loading && (
+                    <div className="loader">Chargement...</div>
+                )}
 
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <Heading
