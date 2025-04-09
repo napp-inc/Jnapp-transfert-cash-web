@@ -5,9 +5,14 @@ import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
 import Popup from "../atoms/Popup";
+import Select from "../atoms/Select";
 import { AddCaisseRoute } from "../../endPointsAndKeys";
+import useAgent from "../../hooks/useAgents";
+import useAgences from '../../hooks/useAgences';
 
-export default function CreateAccountForm() {
+export default function AddCaisseFormFields() {
+    const agences = useAgences();
+    const agents = useAgent();
     const [formData, setFormData] = useState({
         designation: "",
         solde: 0,
@@ -81,7 +86,7 @@ export default function CreateAccountForm() {
                 <div className="flex items-center justify-between mb-12">
                     <Heading
                         level="h2"
-                        children="Créer un nouveau compte"
+                        children="Créer une nouvelle caisse"
                         className="px-4 mt-4 text-xl font-bold text-center text-orange-600"
                     />
                     <div className="w-1/4">
@@ -115,17 +120,6 @@ export default function CreateAccountForm() {
 
                         <div className="col-span-1">
                             <Input
-                                type="number"
-                                name="solde"
-                                value={formData.solde}
-                                onChange={handleChange}
-                                placeholder="Solde initial"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
                                 type="text"
                                 name="devise"
                                 value={formData.devise}
@@ -136,26 +130,32 @@ export default function CreateAccountForm() {
                         </div>
 
                         <div className="col-span-1">
-                            <Input
-                                type="text"
+                            <Select
                                 name="agence"
                                 value={formData.agence}
                                 onChange={handleChange}
-                                placeholder="ID de l'agence"
-                                required
+                                options={agences.data.map((agence) => ({
+                                    value: agence.reference,
+                                    label: agence.designation
+                                }))}
+                                placeholder="Sélectionnez une agence"
                             />
+                            
                         </div>
-
                         <div className="col-span-1">
-                            <Input
-                                type="text"
+                           
+                            <Select
                                 name="gestionnaire"
                                 value={formData.gestionnaire}
                                 onChange={handleChange}
-                                placeholder="ID du gestionnaire"
-                                required
+                                options={agents.data.map((agent) => ({
+                                    value: agent.reference, 
+                                    label: `${agent.nom} ${agent.postnom} ${agent.prenom}`
+                                }))}
+                                placeholder="Sélectionnez un gestionnaire"
                             />
                         </div>
+
                     </div>
                 </div>
             </form>

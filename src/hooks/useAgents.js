@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAllAgentsRoute } from "../endPointsAndKeys";
 import { DateTime } from "luxon";
 
-export default function useAgences() {
+export default function useAgent() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,12 +28,12 @@ export default function useAgences() {
                 console.log(agentsArray);
 
                 const formattedData = agentsArray.map((agent) => ({
+                    reference: agent?.id,
                     "nom": agent?.nom || "",
                     "postnom": agent?.postnom || "",
                     "prenom": agent?.prenom || "",
                     "email": agent?.email || "",
                     "telephone": agent?.telephone || "",
-                    "photo": agent?.photo || "",
                     "adresse": agent.adresse || "",
                     "agence": agent?.agence?.code || "",
                     "role": agent?.role?.code || "",

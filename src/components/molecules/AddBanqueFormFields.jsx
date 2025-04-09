@@ -7,7 +7,7 @@ import Button from "../atoms/Button";
 import Popup from "../atoms/Popup";
 import { AddBanqueRoute } from "../../endPointsAndKeys";
 
-export default function CreateBankForm() {
+export default function AddBanqueFormFields() {
     const [formData, setFormData] = useState({
         designation: "",
         adresse: "",

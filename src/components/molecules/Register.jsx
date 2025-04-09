@@ -105,13 +105,14 @@ export default function RegisterForm() {
                         className="px-4 mb-6 text-lg font-bold text-orange-600"
                     />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <Input
+                        {/*<Input
                             type="text"
                             name="code"
                             value={formData.code}
                             onChange={handleChange}
                             placeholder="Code"
-                        />
+                        />*/}
+                        
                         <Input
                             type="text"
                             name="designation"

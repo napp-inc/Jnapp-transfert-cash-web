@@ -10,19 +10,19 @@ import Button from "../atoms/Button";
 import MenuDivider from "../atoms/MenuDivider";
 import Logo from "../atoms/Logo";
 import {
-    BsSpeedometer2,// Speedometer icon
-    BsCarFront,// Car icon
-    BsPeople,// People icon
-    BsBuildings,// Buildings icon
-    BsArrowLeftRight,// Arrow left right icon
-    BsBell,// Bell icon
-    BsClipboardData,// Clipboard data icon
-    BsList,// List icon
-    BsPerson,// Person icon
-    BsGear,// Gear icon
-    BsChevronRight,// Chevron right icon
-    BsPlusCircle,// Plus circle icon
-    BsShieldPlus// Shield plus icon
+    BsSpeedometer2, // Speedometer icon
+    BsCarFront, // Car icon
+    BsPeople, // People icon
+    BsBuildings, // Buildings icon
+    BsArrowLeftRight, // Arrow left right icon
+    BsBell, // Bell icon
+    BsClipboardData, // Clipboard data icon
+    BsList, // List icon
+    BsPerson, // Person icon
+    BsGear, // Gear icon
+    BsChevronRight, // Chevron right icon
+    BsPlusCircle, // Plus circle icon
+    BsShieldPlus // Shield plus icon
 } from "react-icons/bs";
 
 export default function Menu() {
@@ -31,7 +31,7 @@ export default function Menu() {
     const [isAgentsOpen, setIsAgentsOpen] = useState(false);
     const [isTransfertOpen, setIsTransfertOpen] = useState(false);
     const [isAgencyOpen, setIsAgencyOpen] = useState(false);
-
+    const [isBankOpen, setIsBankOpen] = useState(false); // New state for Bank submenu
     const router = useRouter();
     const [isHidden, setIsHidden] = useState(false);
     const isMobile = useMediaQuery("(max-width: 767px)");
@@ -50,6 +50,7 @@ export default function Menu() {
             console.error("Erreur lors de la déconnexion:", error);
         }
     };
+
     return (
         <div className="bg-white p-4 rounded shadow-md w-5/5 sm:w-1/5 test">
             <div className="flex items-center space-x-2 mb-4 test" onClick={toggleVisibility}>
@@ -61,25 +62,26 @@ export default function Menu() {
                 />
                 <h1 className="text-xl font-bold test">J-napps Tracker</h1>
             </div>
-
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />
-
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 <MenuItem icon={BsSpeedometer2} href="/dashboard" label="Tableau de bord" />
-
-                <MenuItem icon={BsList} href="/vehicules/list-vehicle" label="Véhicules" onClick={(e) => {
-                    e.preventDefault();
-                    setIsVehicleOpen(!isVehicleOpen);
-                }} rightIcon={() => (
-                    <BsChevronRight
-                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                            }`}
-                    />
-                )} />
+                <MenuItem
+                    icon={BsList}
+                    href="/vehicules/list-vehicle"
+                    label="Véhicules"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setIsVehicleOpen(!isVehicleOpen);
+                    }}
+                    rightIcon={() => (
+                        <BsChevronRight
+                            className={`w-4 h-4 transition-transform ${isVehicleOpen ? "rotate-90" : ""}`}
+                        />
+                    )}
+                />
                 {/* Sous menu des véhicules */}
                 <div
-                    className={`${isVehicleOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isVehicleOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsList}
@@ -94,20 +96,23 @@ export default function Menu() {
                         className="ml-6"
                     />
                 </div>
-
-                <MenuItem icon={BsPeople} href="" label="Agents" onClick={(e) => {
-                    e.preventDefault;
-                    setIsAgentsOpen(!isAgentsOpen)
-                }} rightIcon={() => (
-                    <BsChevronRight
-                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                            }`}
-                    />
-                )} />
+                <MenuItem
+                    icon={BsPeople}
+                    href=""
+                    label="Agents"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setIsAgentsOpen(!isAgentsOpen);
+                    }}
+                    rightIcon={() => (
+                        <BsChevronRight
+                            className={`w-4 h-4 transition-transform ${isAgentsOpen ? "rotate-90" : ""}`}
+                        />
+                    )}
+                />
                 {/* Sous menu des Agents */}
                 <div
-                    className={`${isAgentsOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isAgentsOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsList}
@@ -122,20 +127,23 @@ export default function Menu() {
                         className="ml-6"
                     />
                 </div>
-
-                <MenuItem icon={BsBuildings} href="" label="Agences" onClick={(e) => {
-                    e.preventDefault;
-                    setIsAgencyOpen(!isAgencyOpen)
-                }} rightIcon={() => (
-                    <BsChevronRight
-                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                            }`}
-                    />
-                )} />
+                <MenuItem
+                    icon={BsBuildings}
+                    href=""
+                    label="Agences"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setIsAgencyOpen(!isAgencyOpen);
+                    }}
+                    rightIcon={() => (
+                        <BsChevronRight
+                            className={`w-4 h-4 transition-transform ${isAgencyOpen ? "rotate-90" : ""}`}
+                        />
+                    )}
+                />
                 {/* Sous menu des Agences */}
                 <div
-                    className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsPlusCircle}
@@ -162,20 +170,23 @@ export default function Menu() {
                         className="ml-6"
                     />
                 </div>
-
-                <MenuItem icon={BsBuildings} href="" label="Banques" onClick={(e) => {
-                    e.preventDefault;
-                    setIsAgencyOpen(!isAgencyOpen)
-                }} rightIcon={() => (
-                    <BsChevronRight
-                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                            }`}
-                    />
-                )} />
+                <MenuItem
+                    icon={BsBuildings}
+                    href=""
+                    label="Banques"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setIsBankOpen(!isBankOpen);
+                    }}
+                    rightIcon={() => (
+                        <BsChevronRight
+                            className={`w-4 h-4 transition-transform ${isBankOpen ? "rotate-90" : ""}`}
+                        />
+                    )}
+                />
                 {/* Sous menu des Banques */}
                 <div
-                    className={`${isAgencyOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isBankOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsPlusCircle}
@@ -184,9 +195,15 @@ export default function Menu() {
                         className="ml-6"
                     />
                     <MenuItem
+                        icon={BsPlusCircle}
+                        href="/banque/add-compte"
+                        label="Ajouter un compte"
+                        className="ml-6"
+                    />
+                    <MenuItem
                         icon={BsList}
                         href="/banque/list-banque"
-                        label="Liste des banque"
+                        label="Liste des banques"
                         className="ml-6"
                     />
                     <MenuItem
@@ -195,22 +212,25 @@ export default function Menu() {
                         label="Liste des comptes"
                         className="ml-6"
                     />
-                </div>
 
-                {/* <MenuItem icon={BsBuildings} href="/organisation" label="Organisation" /> */}
-                <MenuItem icon={BsArrowLeftRight} href="" label="Transferts" onClick={(e) => {
-                    e.preventDefault;
-                    setIsTransfertOpen(!isTransfertOpen);
-                }} rightIcon={() => (
-                    <BsChevronRight
-                        className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                            }`}
-                    />
-                )} />
+                </div>
+                <MenuItem
+                    icon={BsArrowLeftRight}
+                    href=""
+                    label="Transferts"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setIsTransfertOpen(!isTransfertOpen);
+                    }}
+                    rightIcon={() => (
+                        <BsChevronRight
+                            className={`w-4 h-4 transition-transform ${isTransfertOpen ? "rotate-90" : ""}`}
+                        />
+                    )}
+                />
                 {/* Sous menu des Transferts */}
                 <div
-                    className={`${isTransfertOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isTransfertOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsList}
@@ -230,34 +250,18 @@ export default function Menu() {
                         label="Vérifier un transfert"
                         className="ml-6"
                     />
-
-                    {/*<MenuItem
-                        icon={BsPlusCircle}
-                        href="/transferts/validate-transfert"
-                        label="Valider un transfert"
-                        className="ml-6"
-                    />*/}
                 </div>
-
-
-                {/* <MenuItem icon={BsClipboardData} href="/reports" label="Rapports" /> */}
-
             </MenuSection>
-
             <MenuDivider isHidden={isHidden} isMobile={isMobile} />
-
             <MenuSection isHidden={isHidden} isMobile={isMobile}>
                 <MenuItem icon={BsPerson} href="#" label="Compte" />
-
-
                 <MenuItem
                     icon={BsGear}
                     href="#"
                     label="Paramètres"
                     rightIcon={() => (
                         <BsChevronRight
-                            className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""
-                                }`}
+                            className={`w-4 h-4 transition-transform ${isSettingsOpen ? "rotate-90" : ""}`}
                         />
                     )}
                     onClick={(e) => {
@@ -265,11 +269,9 @@ export default function Menu() {
                         setIsSettingsOpen(!isSettingsOpen);
                     }}
                 />
-
                 {/* Sous menu des paramètres */}
                 <div
-                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"
-                        } overflow-hidden transition-all duration-300`}
+                    className={`${isSettingsOpen ? "max-h-fit" : "max-h-0"} overflow-hidden transition-all duration-300`}
                 >
                     <MenuItem
                         icon={BsPlusCircle}
@@ -290,7 +292,6 @@ export default function Menu() {
                         className="ml-6"
                     />
                 </div>
-
                 <Button text="Deconnexion" type="submit" onClick={handleLogout} />
             </MenuSection>
         </div>

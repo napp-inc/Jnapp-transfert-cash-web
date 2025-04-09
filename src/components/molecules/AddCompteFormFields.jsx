@@ -4,9 +4,10 @@ import Heading from "../atoms/Heading";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
 import Popup from "../atoms/Popup";
+import Select from "../atoms/Select";
 import { AddCompteRoute } from "../../endPointsAndKeys";
 
-export default function CreateAccountForm() {
+export default function AddAccountFormFields() {
     const [formData, setFormData] = useState({
         numeroCompte: "",
         solde: 0,
@@ -112,24 +113,20 @@ export default function CreateAccountForm() {
                         </div>
 
                         <div className="col-span-1">
-                            <Input
-                                type="number"
-                                name="solde"
-                                value={formData.solde}
-                                onChange={handleChange}
-                                placeholder="Solde initial"
-                                required
-                            />
-                        </div>
-
-                        <div className="col-span-1">
-                            <Input
-                                type="text"
+                            <Select
                                 name="devise"
                                 value={formData.devise}
                                 onChange={handleChange}
-                                placeholder="Devise (par ex. USD)"
-                                required
+                                options={["USD", "CDF"]}
+                                placeholder="Sélectionnez une banque"
+                            />
+
+                            <Select
+                                name="devise"
+                                value={formData.devise}
+                                onChange={handleChange}
+                                options={["USD", "CDF"]}
+                                placeholder="Devise"
                             />
                         </div>
 
@@ -139,19 +136,19 @@ export default function CreateAccountForm() {
                                 name="gestionnaire"
                                 value={formData.gestionnaire}
                                 onChange={handleChange}
-                                placeholder="ID du gestionnaire"
+                                placeholder="Gestionnaire"
                                 required
                             />
+
                         </div>
 
                         <div className="col-span-1">
-                            <Input
-                                type="text"
+                            <Select
                                 name="banque"
                                 value={formData.banque}
                                 onChange={handleChange}
-                                placeholder="ID de la banque"
-                                required
+                                options={[]}
+                                placeholder="Sélectionnez une banque"
                             />
                         </div>
                     </div>

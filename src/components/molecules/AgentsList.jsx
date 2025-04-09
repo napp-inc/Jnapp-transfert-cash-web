@@ -7,14 +7,17 @@ import Heading from "../atoms/Heading";
 
 export default function VehicleList() {
     const { data, loading, error } = useAgent();
-
-    // Define the table columns
+    
     const tableColumns = columns([
-        //"Reference",
-        "Marque",
-        "Modele",
-        "Immatriculation",
-        "Etat"
+        "Nom",
+        "Postnom",
+        "Prenom",
+        "Email",
+        "Telephone",
+        "Adresse",
+        "Agence",
+        "Role",
+        "Date d'ajout",
     ]);
 
 
