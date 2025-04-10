@@ -55,9 +55,7 @@ export default function useAgent() {
 
         const formattedData = agentsArray.map((agent) => ({
           reference: agent?.id,
-          nom: agent?.nom || "",
-          postnom: agent?.postnom || "",
-          prenom: agent?.prenom || "",
+          "nom complet": agent?.nom + " "+agent?.postnom+" "+agent?.prenom,
           email: agent?.email || "",
           telephone: agent?.telephone || "",
           adresse: agent.adresse || "",

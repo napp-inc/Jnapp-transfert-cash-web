@@ -9,15 +9,12 @@ export default function VehicleList() {
     const { data, loading, error } = useAgent();
     
     const tableColumns = columns([
-        "Nom",
-        "Postnom",
-        "Prenom",
+        "Nom complet",
         "Email",
         "Telephone",
         "Adresse",
         "Agence",
-        "Role",
-        "Date d'ajout",
+        "Role"
     ]);
 
 
