@@ -1,51 +1,78 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getBanqueRoute } from "../endPointsAndKeys";
+import { auth } from "../firebase";
+import { getIdToken } from "firebase/auth";
 
 export default function useCompte() {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("idToken");
+  const refreshIdToken = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const token = await getIdToken(user, true); // Rafraîchit le token
+        localStorage.setItem("idToken", token);
+        return token;
+      } catch (error) {
+        console.error("Erreur lors du rafraîchissement du token :", error);
+        throw new Error("Impossible de rafraîchir le token.");
+      }
+    } else {
+      throw new Error("Aucun utilisateur connecté.");
+    }
+  };
 
-                if (!token) {
-                    throw new Error("Token non trouvé. Veuillez vous reconnecter.");
-                }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          setPopupMessage("Vous n'êtes pas connecté !");
+          return;
+        }
 
-                const response = await axios.get(getBanqueRoute, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+        let token = localStorage.getItem("idToken");
+        if (!token) {
+          token = await refreshIdToken();
+        }
 
-                const banquesArray = response?.data?.Banques || [];
-                console.log(banquesArray);
+        if (!token) {
+          throw new Error("Token non trouvé. Veuillez vous reconnecter.");
+        }
 
-                const formattedBanques = banquesArray.map((banque, index) => ({
-                    id: index + 1,
-                    reference: banque?.id || "",
-                    nom: banque?.designation || "",
-                    adresse: banque?.devise || "",
-                    email: banque?.agence || "",
-                    telephone: banque?.solde || "",
-                    "site web": banque?.gestionnaire || "",
-                }));
+        const response = await axios.get(getBanqueRoute, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-                setData(formattedBanques);
-            } catch (err) {
-                setError(err.message || "Erreur lors du chargement des agences");
-            } finally {
-                setLoading(false);
-            }
-        };
+        const banquesArray = response?.data?.Banques || [];
+        console.log(banquesArray);
 
-        fetchData();
-    }, []);
+        const formattedBanques = banquesArray.map((banque, index) => ({
+          id: index + 1,
+          reference: banque?.id || "",
+          nom: banque?.designation || "",
+          adresse: banque?.devise || "",
+          email: banque?.agence || "",
+          telephone: banque?.solde || "",
+          "site web": banque?.gestionnaire || "",
+        }));
 
-    return { data, loading, error };
+        setData(formattedBanques);
+      } catch (err) {
+        setError(err.message || "Erreur lors du chargement des agences");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { data, loading, error };
 }

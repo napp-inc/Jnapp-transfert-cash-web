@@ -1,54 +1,78 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { allTransfertsRoute } from "../endPointsAndKeys"
+import { allTransfertsRoute } from "../endPointsAndKeys";
+import { auth } from "../firebase";
+import { getIdToken } from "firebase/auth";
 
-export default function useTransfert ()  {
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+export default function useTransfert() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const token = localStorage.getItem("idToken");
+  const refreshIdToken = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const token = await getIdToken(user, true); // Rafraîchit le token
+        localStorage.setItem("idToken", token);
+        return token;
+      } catch (error) {
+        console.error("Erreur lors du rafraîchissement du token :", error);
+        throw new Error("Impossible de rafraîchir le token.");
+      }
+    } else {
+      throw new Error("Aucun utilisateur connecté.");
+    }
+  };
 
-                if (!token) {
-                    throw new Error("Token non trouvé. Veuillez vous reconnecter.");
-                }
-				
-                const response = await axios.get(allTransfertsRoute, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          setPopupMessage("Vous n'êtes pas connecté !");
+          return;
+        }
 
-				if (!response.ok) {
-					throw new Error("Problème de connexion au serveur");
-				};
-				const result = await response.json();
-				console.log(result);
+        let token = localStorage.getItem("idToken");
+        if (!token) {
+          token = await refreshIdToken();
+        }
 
-				// If the API returns an array of transfer objects
-				if (Array.isArray(result)) {
-					setData(result);
-				}
-				// If the API returns a single transfer object
-				else if (typeof result === 'object' && result !== null) {
-					setData([result]); // Wrap single object in an array
-				}
-				else {
-					throw new Error('Format de données non reconnu');
-				}
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
+        if (!token) {
+          throw new Error("Token non trouvé. Veuillez vous reconnecter.");
+        }
 
-		fetchData();
-	}, []); // Empty dependency array ensures this runs only once
+        const response = await axios.get(allTransfertsRoute, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-	return { data, loading, error };
-};
+        if (!response.ok) {
+          throw new Error("Problème de connexion au serveur");
+        }
+        const result = await response.json();
+        console.log(result);
+
+        if (Array.isArray(result)) {
+          setData(result);
+        }
+        else if (typeof result === "object" && result !== null) {
+          setData([result]);
+        } else {
+          throw new Error("Format de données non reconnu");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { data, loading, error };
+}

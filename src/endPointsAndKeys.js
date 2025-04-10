@@ -37,7 +37,7 @@ export const getCaisseRoute = "";
 
 export const getCompteRoute = "";
 
-export const getBanqueRoute = "";
+export const getBanqueRoute = "https://banque-tfcv6lmhba-uc.a.run.app/listBanques";
 
 export const AddCaisseRoute = "https://caisse-tfcv6lmhba-uc.a.run.app/create";
 

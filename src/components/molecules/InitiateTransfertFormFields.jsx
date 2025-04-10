@@ -110,7 +110,7 @@ export default function InitiateTransfert() {
                                 { value: 'Caisse', label: 'Caisse' },
                                 { value: 'Compte', label: 'Compte' }
                             ]}
-                            placeholder="Type de propriétaire"
+                            placeholder="Type d'origine"
                         />
                         <Input
                             type="text"
