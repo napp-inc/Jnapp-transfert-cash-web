@@ -9,8 +9,8 @@ import Select from "../atoms/Select";
 import { addAgentRoute } from "../../endPointsAndKeys";
 import useAgences from "../../hooks/useAgences";
 import useRole from "../../hooks/useRoles";
-import useIdToken from "../../hooks/useIdToken";
 import { auth } from "../../firebase";
+import { getIdToken } from "firebase/auth";
 
 export default function AddAgentFormFields() {
   const agences = useAgences().data || [];
@@ -36,15 +36,37 @@ export default function AddAgentFormFields() {
     }));
   };
 
+  const refreshIdToken = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const token = await getIdToken(user, true); // Rafraîchit le token
+        localStorage.setItem("idToken", token);
+        return token;
+      } catch (error) {
+        console.error("Erreur lors du rafraîchissement du token :", error);
+        throw new Error("Impossible de rafraîchir le token.");
+      }
+    } else {
+      throw new Error("Aucun utilisateur connecté.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Données à envoyer:", formData);
 
     try {
-      if (!token) {
-        setPopupMessage(erreur.message || "Une erreur est survenue");
+      const user = auth.currentUser;
+      if (!user) {
+        setPopupMessage("Vous n'êtes pas connecté !");
+        return;
       }
 
+      let token = localStorage.getItem("idToken");
+      if (!token) {
+        token = await refreshIdToken();
+      }
       const response = await axios.post(addAgentRoute, formData, {
         headers: {
           "Content-Type": "application/json",
